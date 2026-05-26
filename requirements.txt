@@ -9,8 +9,11 @@ scipy>=1.11
 rdkit>=2023.9
 
 # Foundation model (Uni-Mol)
-# Install separately:  pip install unimol-tools
-# unimol-tools pulls torch + huggingface_hub; pinning here can cause conflicts.
+# Install separately:  pip install unimol-tools huggingface_hub
+# unimol-tools pulls torch but does NOT auto-install huggingface_hub, even
+# though it needs it to download Uni-Mol weights from HF on first use.
+# (Verified missing on RunPod PyTorch 2.4 / Python 3.11 image, 2026-05-26.)
+huggingface_hub>=0.20
 
 # Interpretation
 shap>=0.44

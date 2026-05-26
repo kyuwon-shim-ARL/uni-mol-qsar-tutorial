@@ -1,0 +1,36 @@
+pod_id: k132oto8kr1ygl
+name: qsar-tut-a40
+purpose: "GPU preflight for kyuwon-shim-ARL/uni-mol-qsar-tutorial public repo: saturation (n=10/100steps) -> cache-warm (3xN=500) -> calibrated long (full N=24K Uni-Mol + SAE 4096-latent 100ep) on CO-ADD PA binary. Verifies the public tutorial actually runs end-to-end on GPU and produces sensible numbers before release."
+created_at: "2026-05-26T01:40:46.723Z"
+deleted_at: "2026-05-26T02:08:00Z"
+datacenter: CA-MTL-1
+gpu: NVIDIA A40 (48GB)
+gpu_count: 1
+cost_per_hr: 0.44
+cost_actual_usd: 0.2
+container_disk_gb: 40
+image: "runpod/pytorch:2.4.0-py3.11-cuda12.4.1-devel-ubuntu22.04"
+network_volume: null
+ssh:
+  host: 69.30.85.115
+  port: 22047
+post_create_steps:
+  - "apt-get install -y libxrender1 libxext6 libsm6 libglib2.0-0  # rdkit Draw needs libXrender"
+  - "pip install unimol-tools xgboost shap rdkit jinja2 nbformat huggingface_hub  # hf_hub NOT auto-pulled by unimol-tools"
+  - "git clone https://github.com/kyuwon-shim-ARL/uni-mol-qsar-tutorial.git"
+  - "scp data/raw/coadd_pa_combined_per_molecule.csv  # CO-ADD raw CSV"
+  - "python scripts/prepare_data.py  # 24120 mols, 689 active (2.9%)"
+execution:
+  script: examples/run_full_pipeline.py --features unimol --sae-latent 4096 --sae-epochs 100
+  log: .omc/pods/longrun.log
+  output_dir: reports/
+  expected_runs: 1
+  expected_gpu_hours: 0.5
+  expected_cost_usd: 0.22
+incidents:
+  - "[2026-05-26 01:38] create_pod_auto with cloudType=ALL (default) returns 400 for every DC x GPU combination. Root cause: rest.runpod.io schema now requires cloudType in {SECURE, COMMUNITY} explicitly — ALL no longer accepted. Workaround: call create_pod directly with cloudType=SECURE."
+  - "[2026-05-26 01:39] A5000/3090/4090 all reported 'no instances available' in both COMMUNITY and SECURE at attempt time. Landed on NVIDIA A40 SECURE at $0.44/hr."
+  - "[2026-05-26 01:44] rdkit Draw module fails on fresh runpod/pytorch image: ImportError libXrender.so.1. Fix: apt-get install libxrender1 libxext6 libsm6 libglib2.0-0."
+  - "[2026-05-26 01:45] unimol-tools 'weight download' raises ImportError because huggingface_hub not in its install_requires. Fix: pip install huggingface_hub separately. Tutorial requirements.txt now documents this."
+  - "[2026-05-26 01:50] gpu_sample_burst labels 22% sustained util as 'CONSISTENTLY_IDLE' (threshold appears >70%). VRAM held + non-zero util = real GPU work; label is misleading for sub-saturation workloads."
+  - "[2026-05-26 02:07] Pipeline completed successfully on N=24120: feat=~3min, SAE 4096-latent 100ep=~1min, MMP scan=~3min. AUC=0.895, AUPRC=0.256, SAE dead=0.000, R2_median=0.824."

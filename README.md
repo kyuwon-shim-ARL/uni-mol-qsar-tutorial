@@ -19,6 +19,10 @@ pair counterfactual), and a self-contained HTML report — all on the public
    every tool in this repo on a generational map (Hansch 1964 → Lipinski
    1997 → ECFP4+RF → GNNs → Uni-Mol → SAE) and shows what problem each
    generation was invented to solve.
+0. **What numbers to expect.** `docs/EXPECTED_OUTPUTS.md` records the
+   real metrics this pipeline produced on an NVIDIA A40 with the full
+   CO-ADD PA dataset (AUC=0.895, SAE descriptor R²=0.824, 8 MMP rules
+   with bootstrap CIs). Use it to tell if your setup is broken.
 2. **How to assemble the stack.** Six small modules, each ≤200 lines.
 3. **How to report results honestly.** L1 (predictive) + L2 (mechanistic
    hypothesis) — and no further. The report template enforces caveats.

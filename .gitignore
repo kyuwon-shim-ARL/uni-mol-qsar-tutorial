@@ -54,9 +54,14 @@ checkpoints/
 *.h5
 
 results/
-reports/*.html
 reports/figures/
 outputs/
+
+# Pod execution logs (large stdout dumps); yaml metadata IS committed
+.omc/pods/*.log
+
+# Keep verified-baseline HTML report committed; ignore everything else under reports/
+reports/coadd_pa_*_smoke.html
 
 # Logs
 *.log
