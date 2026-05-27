@@ -39,12 +39,13 @@ ENV/
 .DS_Store
 
 # Project artifacts
-data/raw/
-data/processed/
-data/*.csv
+# CO-ADD CSVs are tracked in this tutorial repo so `git clone` gives you the
+# data immediately. Only the bulky intermediate downloads are ignored — they
+# can be regenerated with `python scripts/download_chembl_coadd.py --force`.
+data/raw/coadd_pseudomonas_aeruginosa_all.csv
+data/raw/coadd_pa_inhibition_classified.csv
+data/raw/coadd_pa_mic.csv
 data/*.parquet
-!data/README.md
-!data/sample/
 
 models/
 checkpoints/

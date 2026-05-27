@@ -1,12 +1,14 @@
 """Prepare the CO-ADD P. aeruginosa public dataset for the tutorial.
 
-CO-ADD raw files require registration at:
-    https://www.co-add.org
+The "CO-ADD" PA dataset this tutorial uses is hosted in ChEMBL
+(src_id=40, src_short_name=COADD) and is accessible via the public ChEMBL
+REST API. No registration is required.
 
-After registration, download the *P. aeruginosa* phenotypic screening data
-and place the CSV(s) under  data/raw/  before running this script.
+If  data/raw/coadd_pa_combined_per_molecule.csv  is missing this script
+delegates to  scripts/download_chembl_coadd.py  to fetch the source assays
+(~5 minutes, ~25 MB) and produce the four lineage CSVs in  data/raw/.
 
-Output:
+Then this script canonicalizes SMILES with RDKit, de-duplicates, and writes:
     data/processed/coadd_pa.csv  with columns  canonical_smiles, active
 """
 
@@ -56,10 +58,19 @@ def main() -> int:
     args = parser.parse_args()
 
     if not args.input.exists():
-        print(f"ERROR: input file not found: {args.input}", file=sys.stderr)
-        print("Download CO-ADD PA data from https://www.co-add.org and place it under data/raw/.",
+        print(f"INFO: {args.input.name} not found; fetching from ChEMBL...",
               file=sys.stderr)
-        return 1
+        sys.path.insert(0, str(Path(__file__).parent))
+        import download_chembl_coadd
+
+        rc = download_chembl_coadd.main(["--out-dir", str(args.input.parent)])
+        if rc != 0:
+            print("ERROR: ChEMBL download step failed.", file=sys.stderr)
+            return rc
+        if not args.input.exists():
+            print(f"ERROR: download completed but {args.input} still missing.",
+                  file=sys.stderr)
+            return 1
 
     df = pd.read_csv(args.input)
     if args.smiles_col not in df.columns or args.label_col not in df.columns:

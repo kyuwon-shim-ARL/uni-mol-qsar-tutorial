@@ -163,6 +163,16 @@ dataset, it is well curated (Blaskovich et al. 2015–), and it has a clean
 active/inactive label per compound. It is also the standard external-validation
 set used by Gurvic 2024 and the foundation of modern Gram-negative MMPA work.
 
+**Data access note (added 2026-05-27)**: the dataset this tutorial actually
+consumes is the CO-ADD PA screening data **as mirrored in ChEMBL**
+(`src_id=40`, `src_short_name=COADD`). CO-ADD releases its screens on ChEMBL
+after a 24-month embargo, and the ChEMBL public REST API needs no
+registration. `scripts/download_chembl_coadd.py` pulls five PA assays
+(four active, one empty), classifies inhibition / MIC subsets, and
+aggregates per molecule into the ML-ready CSV. The lineage and the active
+call rule are documented in `data/README.md` and reproduced byte-for-byte
+against the parent project (24,120 molecules, 689 active = 2.86%).
+
 ---
 
 ## 5. Our position — what we premise and what we claim
@@ -209,6 +219,25 @@ A useful mental model is a 4-tier evidence pyramid for chemistry claims:
 **Important**: this tutorial teaches you to produce **L1 + L2** evidence
 *responsibly*. Anything claimed beyond L2 in the parent project requires
 wet-lab data we do not have, and we do not pretend otherwise.
+
+### 5.4 Known limitations of this tutorial implementation
+
+These are deliberately surfaced. Fixing any of them is a sensible first PR
+for an incoming intern; we keep the warts visible rather than hidden.
+
+| # | Limitation | Why it matters | Suggested fix |
+|---|---|---|---|
+| **L1** | **Random K-fold split**, not scaffold split. `StratifiedKFold` shares Bemis-Murcko scaffolds across folds. | CO-ADD contains analogue families; an analogue of a training molecule sitting in the validation fold inflates AUC. Parent project saw Δ≈0.13 between leaky and honest splits. The headline OOF AUC≈0.83–0.90 should be read as an optimistic upper bound. | Add `scaffold_folds()` next to `stratified_folds()` in `src/qsar_tutorial/data.py`; report both metrics. (Scaffold split work is tracked separately by the maintainer.) |
+| **L2** | **No external validation set.** Premise **P1** ("Cleanlab labels are trustworthy") declares "external validation disagreement rate >20%" as its breaking condition, but no external dataset is wired in. P1 is therefore unfalsifiable inside this tutorial as it stands. | Drug-discovery claims that never face an external dataset are field-known to overstate. | Wire in one external set (Stokes 2020 *halicin*, Wong 2024 *abaucin*, or a ChEMBL non-CO-ADD PA extract). Report EF@1% on that set alongside OOF AUC. |
+| **L3** | **Per-molecule active rule ignores censored MIC.** `coadd_pa_combined_per_molecule.csv` declares `active=1` if `min_mic_nM ≤ 40_000`, without re-checking `standard_relation`. Rows originally tagged `MIC > 32 µg/mL` can still satisfy the aggregated condition. | Inflates the active class. This is preserved deliberately to byte-match the parent project's CSV (24,120 / 689 active). A censored-aware rule would reduce actives to roughly 100. | Add a `--strict-mic` flag in `scripts/download_chembl_coadd.py` that excludes `standard_relation == ">"` rows before aggregation, and report both label sets. |
+| **L4** | **Final SHAP / SAE interpretations come from a single full-data refit.** Fold-wise stability (Jaccard or rank correlation of top-K features) is not reported. | Calling a top SHAP feature a "discovery" without fold stability is statistically weak; the parent paper requires this kind of check. | Re-run TreeSHAP / SAE per fold; report top-K Jaccard across folds. Drop features below a stability threshold. |
+| **L5** | **ECFP4 vs Uni-Mol comparison is not apples-to-apples.** The qualitative caveat in **H1** ("ECFP4+RF still wins on ranking") is supported only by a `--max-n 3000` smoke run; the full-N (24,120) ECFP4 baseline has never been recorded. | A canonical statement should rest on equal data, equal folds. | Run the full-N ECFP4 path once (CPU-only, ~1 h) and record the result. |
+| **L6** | **Raw → 24,120 derivation script** lived only in the parent project until 2026-05-27. Recovered as `scripts/download_chembl_coadd.py` (this commit). The four lineage CSVs and the active-call rule are now reproducible inside this repo. | Tutorials whose data appears by magic are not tutorials. | Already addressed — `python scripts/prepare_data.py` is now end-to-end. Keep `data/README.md` in sync if assays change. |
+
+These six items, fixed in order, would turn the tutorial from
+"reproducible-with-asterisks" to fully honest. None of them invalidate the
+*pedagogical* purpose, but each one is a real methodological loose end an
+intern should learn to see.
 
 ---
 
