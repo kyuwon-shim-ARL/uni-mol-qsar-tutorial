@@ -59,6 +59,16 @@ def main():
     p.add_argument("--max-n", type=int, default=None, help="Optional cap for fast iteration.")
     p.add_argument("--sae-latent", type=int, default=2048)
     p.add_argument("--sae-epochs", type=int, default=60)
+    p.add_argument(
+        "--cleanlab",
+        action="store_true",
+        help=(
+            "Run active-protected Cleanlab cleaning on the current "
+            "feature matrix before training. Off by default; pass this "
+            "flag to flip flagged inactive labels to active. The active "
+            "class is never relabeled (see src/qsar_tutorial/label_cleaning.py)."
+        ),
+    )
     args = p.parse_args()
 
     print(f"[1/6] Loading {args.csv}")
@@ -80,6 +90,22 @@ def main():
     y = ds.y[valid]
     smi_valid = ds.smiles[valid]
     print(f"  X={X.shape}  y_active={y.mean():.1%}")
+
+    if args.cleanlab:
+        print("[2.5/6] Cleanlab (active-protected) on current features")
+        from qsar_tutorial.label_cleaning import clean_labels_active_protected
+        y_cleaned, cl_report = clean_labels_active_protected(X, y)
+        print(
+            f"  flagged={cl_report.n_flagged}, "
+            f"relabeled 0->1={cl_report.n_relabeled}, "
+            f"protected (active kept)={cl_report.n_protected}"
+        )
+        print(
+            f"  active: {cl_report.active_before} -> "
+            f"{cl_report.active_after} "
+            f"({(cl_report.active_after - cl_report.active_before):+d})"
+        )
+        y = y_cleaned
 
     print("[3/6] Cross-validated OOF (5-fold)")
     folds = stratified_folds(Dataset(smiles=smi_valid, y=y), n_splits=5)

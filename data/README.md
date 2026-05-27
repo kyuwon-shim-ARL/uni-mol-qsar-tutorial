@@ -83,6 +83,102 @@ the parent project's combined CSV exactly (24,120 molecules, 689 active) and
 is preserved for reproducibility. See `docs/BACKGROUND.md` §5.4 for why this
 matters and how to tighten the rule if you need a more conservative count.
 
+### Why the censored-MIC caveat matters — and what to do about it
+
+MIC (Minimum Inhibitory Concentration) assays test compounds across a
+finite concentration range (CO-ADD PA tops out at 32 µg/mL). When a
+compound fails to inhibit growth at the highest tested concentration the
+ChEMBL row carries:
+
+| `standard_relation` | `standard_value` | meaning |
+|---|---|---|
+| `=` | 8 | true MIC measured = 8 µg/mL → genuinely active |
+| `>` | 32 | only know MIC > 32 µg/mL; true MIC could be 64, 1000, ∞ → **right-censored = effectively inactive** |
+
+In the CO-ADD MIC table **1,520 of 1,639 rows (93%) are right-censored**
+(`relation = ">"`). The per-molecule rule used above ignores the `>` flag
+once aggregated, so a `>` row whose value happens to sit at or below the
+threshold (e.g. 32 µg/mL ≈ 80,000 nM; CHEMBL4296802's nM batch reports
+boundary values in the 40,000-nM range) ends up counted as active.
+
+Reverse-engineered impact on `coadd_pa_combined_per_molecule.csv`:
+
+| label mode | active count | active rate | how computed |
+|---|---|---|---|
+| **Loose** (shipped default) | 689 | 2.86% | per-molecule rule above, censored rows included |
+| **Strict** (censored excluded) | ~89 | 0.37% | additionally require `standard_relation != ">"` on every row that contributes to `min_mic_*` |
+
+The ~600 difference is the false-positive band created by censoring.
+
+#### Loose vs strict — practical trade-off
+
+| | Loose (689 active) | Strict (~89 active) |
+|---|---|---|
+| Headline OOF AUC | high (~0.83–0.90) | lower (~0.70 ± 0.05 expected) |
+| What the model learns | partly "compound was put through MIC assay" (assay-selection bias) | actual "MIC ≤ 32 µg/mL pattern" |
+| Transferability to a new dataset | poor — bias differs | better — real activity signal |
+| Per-fold validation actives | ~138 | ~18 (workable but noisy) |
+| Right comparison metric | AUC | **AUPRC + EF@1%** (AUC saturates at rare-event rate) |
+
+Reference points for the 0.37% active rate: Liu 2023 Gram-negative had
+~1.3% actives; Stokes 2020 *halicin* had ~5%; Wong 2024 *abaucin* had ~6.4%.
+At 0.37% this tutorial is harder than published successes but still in the
+"rare-event learning" regime — not impossible, just demands proper metric
+choice and class weighting.
+
+#### How to switch to strict labels
+
+A future-PR sketch (not yet implemented):
+
+```bash
+# 1. Refetch with strict-MIC flag (proposed extension; see BACKGROUND.md §5.4 L3):
+python scripts/download_chembl_coadd.py --strict-mic --force
+
+# 2. Re-canonicalize / dedup:
+python scripts/prepare_data.py
+```
+
+Until that flag exists, the same effect can be reproduced by filtering
+`coadd_pa_mic.csv` to `standard_relation != ">"` before the per-molecule
+combine step.
+
+### Cleanlab — a different angle on noisy labels
+
+Censored MIC is one source of label noise; experimental noise on the
+inhibition screen is another. The tutorial ships an **active-protected
+Cleanlab cleaner** (`src/qsar_tutorial/label_cleaning.py`) — the binary
+analogue of the parent project's P-protected 4-class recipe:
+
+1. 5-fold OOF probabilities on the current feature matrix.
+2. `cleanlab.filter.find_label_issues` flags suspicious rows.
+3. Flagged `inactive` rows → relabel to argmax (rescuing missed actives).
+4. Flagged `active` rows → **protected, never relabeled** (minority class
+   is too valuable to wash into the majority).
+
+Enable it in the pipeline:
+
+```bash
+python examples/run_full_pipeline.py --features ecfp4 --cleanlab
+```
+
+On the N=3,000 smoke run this typically flips ~45 inactive labels to
+active and protects ~43 flagged active labels, raising the active count
+from 87 to 132 (+45) — a controlled, audit-trailed "minority-class
+expansion" that is orthogonal to the strict-MIC fix above.
+
+**What Cleanlab can and cannot do here:**
+
+| | strict-MIC | Cleanlab (active-protected) |
+|---|---|---|
+| Removes censored false-positive actives | **yes** | no (protected by design) |
+| Recovers missed-active (false-negative inactives) | no | **yes** |
+| Needs a model | no (rule-based) | yes (uses the pipeline's classifier) |
+| Output label set vs default 689 | smaller (~89) | larger (varies, typically 700–800) |
+
+They address different failure modes and can be combined: run strict-MIC
+first to drop censored false positives, then Cleanlab to rescue missed
+actives among the remaining inactives.
+
 ## Expected schema after preprocessing
 
 | column | dtype | description |
