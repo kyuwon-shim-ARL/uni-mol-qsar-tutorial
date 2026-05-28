@@ -18,6 +18,7 @@ huggingface_hub>=0.20
 # Interpretation
 shap>=0.44
 torch>=2.0  # required by SAE training
+cleanlab>=2.6  # label-noise audit (T2)
 
 # Visualization / Reports
 matplotlib>=3.7

@@ -143,3 +143,81 @@ after Uni-Mol weights are cached.
    `COMMUNITY` explicitly. Direct `create_pod` works.
 
 For full pod incident log, see `.omc/pods/2026-05-26_qsar-tut-a40.yaml`.
+
+---
+
+## Artifact naming convention (T0)
+
+Every report or per-experiment artifact written to `reports/` MUST follow:
+
+```
+{YYYYMMDD}_{experiment-tag}_{featurizer}.{ext}
+```
+
+- `YYYYMMDD`: UTC date the artifact was produced
+- `experiment-tag`: short kebab name (e.g. `split-compare`, `cleanlab-audit`, `full-pipeline`)
+- `featurizer`: `ecfp4` or `unimol`
+- `ext`: `html` for human-facing report, `json` for machine-readable counts
+
+Existing baseline artifacts (`coadd_pa_unimol_FULL.html` etc.) are kept as
+historical references — they are cited in this document. New runs MUST NOT
+overwrite them. If a numerical comparison needs the baseline to be
+re-generated, output to a new dated name and append a "vs baseline" row.
+
+Cycle 1 deliverables (T1/T4/T2):
+
+| Artifact | Produced by |
+|---|---|
+| `{date}_split-compare_ecfp4.html` + `.json` | `examples/run_split_comparison.py --features ecfp4` |
+| `{date}_split-compare_unimol.html` + `.json` | same, `--features unimol` (GPU; runpod gate) |
+| `{date}_cleanlab_flagged.csv` | `examples/cleanlab_audit.py` (maintainer review needed) |
+| `{date}_cleanlab_audit.json` | same |
+
+## GPU preflight checklist (T0, runpod-mcp)
+
+Before any GPU-touching launch (T1 unimol path, full pipeline, T4 unimol
+stability) you must clear each of the following. Failure of any item
+aborts the launch — saves money.
+
+1. **Weight cache check** — `python scripts/check_unimol_cache.py` returns
+   exit 0. If 1 or 2, fix locally before paying for a pod.
+2. **`mcp__runpod-mcp__plan_gpu_job`** — pass `randomAccessTrainingGb` (data
+   size after rdkit canonicalization). Use the returned
+   `containerDiskInGb` recommendation verbatim. NV-only paths are slower
+   for random-access training (~18× per e049 measurement).
+3. **`mcp__runpod-mcp__create_pod_auto`** — single-GPU first, lowest cost
+   class. `costSafetyConfirmed: true` ONLY after user explicitly confirms
+   the cost line item.
+4. **`mcp__runpod-mcp__run_preflight`** — must pass with `trainingSmokeCmd`
+   for any NEW script (e.g. `python examples/run_split_comparison.py
+   --features unimol --csv data/processed/coadd_pa.csv` — make sure it
+   completes the featurize step on 100 mols and the OOF step on 1 fold
+   before going full).
+5. **`mcp__runpod-mcp__gpu_sample_burst`** at T+120s — must NOT be
+   `CONSISTENTLY_IDLE`. If it is, abort (CPU fallback / NV-streaming /
+   NotImplementedError).
+6. **Termination** — `mcp__runpod-mcp__delete_pod` immediately after
+   artifact rsync. NEVER stop (stop is still billed). NEVER spot.
+
+The `.omc/pods/{date}_*.yaml` incident log MUST be appended after each
+launch with at minimum: pod id, GPU class, wall-clock, $ cost, exit code.
+
+## Cleanlab honest framing (T2)
+
+The cleanlab A/B is set up to surface a possibly-negative result. The
+**risk** is circular flagging: at 2.86% active rate (689/24,120), confident
+learning can mark hard-to-predict actives as "noisy" simply because the
+model predicts them poorly. Removing them then *appears* to help AUPRC.
+
+Defenses encoded in `examples/cleanlab_audit.py`:
+- Bootstrap CI95 on `Δ AUPRC = AUPRC(cleaned) − AUPRC(original)` (1000
+  resamples by default) — wide CI signals "no real effect".
+- Paired permutation p-value (1000 perms) — checks how often a random
+  swap of A/B labels produces an equal or larger Δ in magnitude.
+- Maintainer-only review of flagged actives (intern does NOT mark
+  `looks-spurious` without sign-off; comment column is for observation
+  only on the intern path).
+
+If Δ CI95 brackets zero OR permutation p > 0.05, the conclusion is
+"cleanlab did NOT improve labels at significance" — report exactly that.
+Do not iterate flagging strategies to chase a positive result.
