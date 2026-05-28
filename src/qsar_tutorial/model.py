@@ -39,6 +39,8 @@ class OOFResult:
     y_true: np.ndarray
     y_prob: np.ndarray              # P(active) per sample, from out-of-fold predictions
     per_fold: list[dict[str, float]] = field(default_factory=list)
+    fold_models: list = field(default_factory=list)          # per-fold trained classifier (reused by T4 stability SHAP)
+    fold_indices: list = field(default_factory=list)         # per-fold (tr_idx, va_idx) numpy arrays
 
     @property
     def auc(self) -> float:
@@ -74,11 +76,19 @@ def cross_validated_oof(
     X: np.ndarray,
     y: np.ndarray,
     folds,
+    keep_fold_models: bool = True,
     **params,
 ) -> OOFResult:
-    """Stratified K-fold OOF probability for class=1 (active)."""
+    """K-fold OOF probability for class=1 (active).
+
+    If `keep_fold_models=True` (default) the per-fold trained model and
+    (train_idx, val_idx) tuples are retained so downstream stability SHAP
+    can run without re-fitting.
+    """
     y_prob = np.zeros(len(y), dtype=float)
     per_fold = []
+    fold_models: list = []
+    fold_indices: list = []
     for k, (tr, va) in enumerate(folds, start=1):
         model = build_classifier(**params)
         fit_with_class_weight(model, X[tr], y[tr])
@@ -89,4 +99,13 @@ def cross_validated_oof(
         except ValueError:
             fold_auc = float("nan")  # fold lacks a class
         per_fold.append({"fold": k, "n_val": len(va), "AUC": float(fold_auc)})
-    return OOFResult(y_true=y.copy(), y_prob=y_prob, per_fold=per_fold)
+        if keep_fold_models:
+            fold_models.append(model)
+            fold_indices.append((np.asarray(tr), np.asarray(va)))
+    return OOFResult(
+        y_true=y.copy(),
+        y_prob=y_prob,
+        per_fold=per_fold,
+        fold_models=fold_models,
+        fold_indices=fold_indices,
+    )

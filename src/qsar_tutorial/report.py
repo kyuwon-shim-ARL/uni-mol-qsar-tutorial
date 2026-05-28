@@ -64,6 +64,59 @@ TEMPLATE = Template(
 {% endfor %}
 </tbody></table>
 
+{% if stability_rows %}
+<h2>2b. SHAP stability across {{ stability_n_folds }} folds</h2>
+<div class="caveat">
+  <strong>How to read.</strong> 5/5 fold-presence is strong evidence that the
+  model relies on this feature consistently. 1-2/5 is likely spurious — the
+  feature won the lottery in one fold's training data. We do not apply any
+  threshold here; the distribution is the deliverable.
+</div>
+<table>
+<thead><tr>
+  <th>#</th><th>Feature</th><th>fold-presence</th><th>mean rank</th>
+  <th>rank std</th><th>mean |SHAP|</th>
+</tr></thead>
+<tbody>
+{% for r in stability_rows %}
+<tr>
+  <td>{{ loop.index }}</td>
+  <td><code>{{ r.feature }}</code></td>
+  <td>{{ r.fold_presence }} / {{ stability_n_folds }}</td>
+  <td>{{ "%.1f"|format(r.mean_rank) }}</td>
+  <td>{{ "%.1f"|format(r.rank_std) }}</td>
+  <td>{{ "%.4f"|format(r.mean_importance) }}</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+{% endif %}
+
+{% if split_comparison %}
+<h2>1b. Random vs scaffold split — honest evaluation gap</h2>
+<table>
+<thead><tr><th>Split</th><th>AUC</th><th>AUPRC</th><th>MCC@0.5</th><th>fold std (AUC)</th></tr></thead>
+<tbody>
+{% for row in split_comparison %}
+<tr>
+  <td>{{ row.split }}</td>
+  <td>{{ "%.3f"|format(row.AUC) }}</td>
+  <td>{{ "%.3f"|format(row.AUPRC) }}</td>
+  <td>{{ "%.3f"|format(row["MCC@0.5"]) }}</td>
+  <td>{{ "%.3f"|format(row.fold_auc_std) }}</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+<div class="caveat">
+  <strong>Reading.</strong> Scaffold-split AUC is the honest estimate of
+  generalization to new chemistry. Random-split AUC inflates because close
+  analogues leak between train and validation. The gap (random − scaffold)
+  measures how much of the headline number is leakage. Gap is reported
+  regardless of size — that is the honest framing.
+</div>
+{% endif %}
+
 <h2>3. SAE diagnostics</h2>
 <p>
   <span class="metric">latent_dim: {{ sae.latent_dim }}</span>
@@ -133,6 +186,9 @@ class ReportPayload:
     top_shap: list[tuple[str, float]]
     sae: dict
     mmp_rows: list[dict]
+    stability_rows: list[dict] | None = None
+    stability_n_folds: int = 0
+    split_comparison: list[dict] | None = None
 
 
 def render_report(payload: ReportPayload, out_path: str | Path) -> Path:
