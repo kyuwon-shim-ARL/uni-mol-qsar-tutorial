@@ -1,0 +1,44 @@
+# 2026-05-29 GPU launch attempt — STOCKOUT, no pod created
+target: BRAF (CHEMBL5145) + CO-ADD reproducibility, Uni-Mol full pipeline
+intended_gpu: A40 (SECURE, US-TX-3) per EXPECTED_OUTPUTS recipe
+approved_budget: ~$0.18 (cap $0.25)
+actual_cost_incurred: $0.00 (pod creation failed; no billable resources)
+
+# Failure summary (3 sweeps × multiple GPU classes)
+attempts_total: 63
+sweeps:
+  - cloud: SECURE
+    nv: 1s79ivgfyq (pa-antibiotic-data, US-TX-3)
+    gpus_tried: [A40, RTX A6000, RTX A5000]
+    result: all 500 / "could not find any pods"
+  - cloud: SECURE
+    nv: 2g9oaii79i (pa-antibiotic-data-jp, AP-JP-1)
+    gpus_tried: [A40, RTX A6000, RTX A5000, RTX 3090]
+    result: all 500 / "could not find any pods"
+  - cloud: SECURE, no NV (dcPriority fallback)
+    dcs_tried: [US-GA-1, US-CA-2, EU-SE-1, EU-CZ-1, AP-JP-1, US-TX-3, EU-RO-1]
+    gpus_tried: [A40, RTX A6000, RTX A5000, RTX 3090, RTX 4000 Ada]
+    result: all 500 / mixed "no instances" + "could not find pods"
+  - cloud: COMMUNITY, no NV
+    dcs_tried: same 7
+    gpus_tried: [A40, RTX A6000, RTX 4090, RTX A5000, RTX 3090]
+    result: all 500 / "There are no instances currently available"
+  - cloud: SECURE, no NV (high tier probe)
+    gpus_tried: [L40S, L40, RTX 6000 Ada, A100 PCIe]
+    dcs_tried: same 7
+    result: all 500 / "could not find any pods"
+
+# Interpretation
+catalog_listed_all_gpus_as_available: true
+per_dc_provisioning: completely dry for the GPU classes we tried
+likely_cause: RunPod-wide capacity shortage at attempt time (2026-05-29 ~00:30 UTC)
+follow_up:
+  - retry in 30-60 min via scheduled wake or user-initiated
+  - if persistent, switch to a different provider for the unimol benchmark
+  - all CPU ecfp4 results from 2026-05-28 sequence are unaffected
+
+# Resources preserved
+network_volumes_kept:
+  - 1s79ivgfyq pa-antibiotic-data 20GB US-TX-3 (still costs ~$1.40/mo)
+  - 2g9oaii79i pa-antibiotic-data-jp 20GB AP-JP-1 (still costs ~$1.40/mo)
+# Decision on NV retention deferred to user; both contain prior cached weights.

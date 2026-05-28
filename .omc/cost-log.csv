@@ -1,0 +1,2 @@
+ts_utc,skill,task,resource,cost_usd,wall_min,notes
+2026-05-29T00:25:00Z,dr,A40-stockout,RunPod A40,0.00,0,63 attempts failed; no pod created

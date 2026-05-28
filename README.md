@@ -111,6 +111,65 @@ validation are not in this repo. Specifically:
 - Read `docs/BACKGROUND.md` §5 for the L1–L4 evidence pyramid that frames
   what claims this tutorial can and cannot support.
 
+## Cancer-target extension (BRAF and friends)
+
+The same pipeline works on any SMILES + binary label CSV. As of 2026-05-28
+the repo includes an extension for single-target cancer-protein QSAR
+(BRAF, EGFR, JAK2 demonstrated). Key entry points:
+
+```bash
+# 1. Pull a ChEMBL target → SMILES + active (binary at pchembl ≥ 8)
+python scripts/download_chembl_target.py --target CHEMBL5145 --name braf
+python scripts/prepare_data.py --input data/raw/braf_per_molecule.csv \
+                               --output data/processed/braf.csv
+
+# 2. Diagnose suitability BEFORE training (read the verdict)
+python scripts/diagnose_dataset.py data/processed/braf.csv
+
+# 3. Run pipeline with auto-split (scaffold for SAR-dense data)
+PYTHONPATH=src python examples/run_full_pipeline.py \
+    --csv data/processed/braf.csv --features ecfp4 \
+    --time-cutoff 2015 \
+    --external data/external/braf_bindingdb.csv \
+    --out reports/braf_ecfp4.html
+```
+
+What's different from the CO-ADD path:
+- **`scripts/diagnose_dataset.py`** prints a 4-rule verdict (cliff%,
+  scaffold dominance, class balance) — refuse to interpret downstream
+  results when cliff% ≥ 0.10 is unhandled.
+- **`--split auto`** chooses scaffold-fold for non-CO-ADD CSVs by default
+  (CO-ADD path unchanged for byte-compat reproducibility).
+- **`--time-cutoff YEAR`** trains on `document_year ≤ cutoff`, evals on
+  `> cutoff` — Sheridan 2013-style "past predicts future" hold-out.
+- **`--external CSV`** scores an independent held-out set (e.g.
+  BindingDB) with auto color-coded gap caveat.
+- **MMP rules** are annotated with `n_distinct_scaffolds` and flagged
+  `series-local` (3 scaffolds threshold by default; see
+  `counterfactual.SERIES_LOCAL_SCAFFOLD_THRESHOLD`).
+- **HTML report** auto-includes a scope boilerplate from
+  `docs/EXPLAINABILITY_SCOPE.md` when the data is single-target.
+
+### Intern walkthrough checklist
+
+If you are an intern starting on this extension, work through:
+
+1. ☐ Read `docs/EXPLAINABILITY_SCOPE.md` (1 page) — what the pipeline
+   answers vs. doesn't.
+2. ☐ Read `PREMISES.md` (H1–H4 + P1–P2) — the testable claims this
+   project relies on. Each premise has a falsification condition.
+3. ☐ Run `python scripts/diagnose_dataset.py data/processed/braf.csv` —
+   recognize each row in the output.
+4. ☐ Run the example pipeline on BRAF (above commands). Confirm the
+   HTML report renders.
+5. ☐ Open `reports/20260528_braf-full_ecfp4.json` (or your fresh run).
+   Note the OOF AUC vs `time_split.AUC` vs `external.AUC`.
+   *The gap between these three is the actual lesson.*
+6. ☐ Record in `LANDSCAPE.md` (under "Pending measurements") any
+   premise check your run resolved.
+7. ☐ Where you got stuck → open an issue or add to the
+   `data/external/README.md` "Known external risks" list.
+
 ## License
 
 MIT (see `LICENSE`). CO-ADD data follows its own academic-use terms.

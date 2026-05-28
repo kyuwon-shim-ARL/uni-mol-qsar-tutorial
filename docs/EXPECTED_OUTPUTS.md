@@ -221,3 +221,142 @@ Defenses encoded in `examples/cleanlab_audit.py`:
 If Δ CI95 brackets zero OR permutation p > 0.05, the conclusion is
 "cleanlab did NOT improve labels at significance" — report exactly that.
 Do not iterate flagging strategies to chase a positive result.
+
+---
+
+## Data regime — phenotypic vs target-specific
+
+The numbers above were measured on the CO-ADD PA phenotypic screen. When
+the pipeline is run on a target-specific dataset (e.g. BRAF / CHEMBL5145),
+expected ranges shift. Do not compare BRAF results to CO-ADD numbers
+directly — the data regimes differ on three axes.
+
+### Dataset diagnostic — measured (2026-05-28)
+
+Run `scripts/diagnose_dataset.py <csv>` for any new dataset before
+trusting downstream metrics.
+
+| Property | CO-ADD PA | BRAF (ChEMBL5145, pchembl ≥ 8) |
+|---|---|---|
+| N molecules | 24,120 | 5,751 |
+| Active fraction | 2.9% | 40.9% |
+| Unique Bemis-Murcko scaffolds | 10,826 | 2,004 |
+| Top-1 scaffold share | 8.3% | 1.0% |
+| Top-10 scaffold share | 16.5% | 8.5% |
+| Activity-cliff fraction (Tanimoto≥0.85, opp. label) | 0.1% | **11.1%** |
+
+The cliff fraction is the load-bearing signal here: it is the data-side
+proxy for "how much SAR structure does this dataset carry?" Phenotypic
+screens are essentially cliff-free; kinase data is cliff-rich.
+
+### Expected metric differences
+
+| Metric | CO-ADD measured | BRAF expectation | Why |
+|---|---|---|---|
+| Random-fold AUC | 0.895 | 0.85–0.95 | inflated by SAR leakage |
+| **Scaffold-fold AUC** | not measured | **0.70–0.85** | the number to actually believe (see `data.scaffold_folds` docstring: 0.05–0.15 drop is normal) |
+| AUPRC | 0.256 | 0.50–0.85 | naturally higher when active fraction is 41% |
+| SAE descriptor R² (median) | 0.824 | **0.40–0.60 expected** | narrower chemical space → fewer monosemantic SAE directions (gap in literature on Uni-Mol SAE; lower-bound estimate from `EXPLAINABILITY_SCOPE.md` Limit 3) |
+| MMP rules with 95% CI excl. zero | 6 / 8 | 3–6 / 8 expected | cliff-driven rules look statistically strong but are scaffold-local (filter via `n_distinct_scaffolds`; see T7 in `counterfactual.py`) |
+| Cleanlab "noisy" flag rate | small | **may be inflated** | activity cliffs look like label noise to confident-learning; do not auto-drop cliff compounds |
+
+These ranges are *bounds-of-credibility*, not predictions. Any number
+outside them on BRAF is a flag to investigate; any number inside them
+should still be interpreted via `EXPLAINABILITY_SCOPE.md`.
+
+### Mandatory practice for target-specific runs
+
+1. Run `scripts/diagnose_dataset.py` first; refuse to interpret
+   downstream results if `activity_cliff_fraction ≥ 0.10` was not
+   handled with `scaffold_folds`.
+2. Report **scaffold-split AUC**, not random-split AUC, as the headline
+   number.
+3. Add `--time-split` (when `document_year` is available) as a second
+   eval lane — kinase data has 20+ years of medicinal-chemistry
+   evolution; the past-vs-future split is the practical benchmark.
+4. Annotate MMP rules with `n_distinct_scaffolds` and report
+   `series-specific` vs `cross-series` separately.
+5. Embed the `EXPLAINABILITY_SCOPE.md` boilerplate at the top of any
+   HTML report produced from single-target data.
+
+### References plugged in
+
+The expected ranges above lean on these published anchors. Full text
+in `EXPLAINABILITY_SCOPE.md`.
+
+- Bharadwaj et al. 2024 (arXiv:2512.08077) — chemistry SAE on SMI-TED
+- Auer et al. 2016 (PMC5198793) — MMP rules are scaffold-local
+- van Tilborg et al. 2022 (PMC9749029) — activity cliffs degrade QSAR + SHAP
+- PMC11032345 (2024) — kinase-class activity cliff density
+- Cai et al. 2022 (PMC9208089) — TreeSHAP on kinases recovers ATP-binding pharmacophores
+
+---
+
+## Measured values — 2026-05-28/29 (ECFP4 path)
+
+GPU-blocked tasks (Uni-Mol SAE on BRAF, CO-ADD reproducibility check)
+are still pending RunPod stock recovery. See
+`.omc/pods/20260529_qsar-braf-a40_stockout.yaml`.
+
+### Cross-target comparison (single-target cancer kinases)
+
+| Target | N | Active% | Scaffold OOF AUC | OOF AUPRC | SAE R² | n_series_local MMP | n_cross_series MMP |
+|--------|---|---------|------------------|-----------|--------|-------------------|--------------------|
+| CO-ADD PA (reference) | 24,120 | 2.9% | (stratified) 0.910 | 0.337 | 0.887 | 0/8 | 8/8 |
+| BRAF | 5,751 | 40.9% | 0.909 | 0.878 | 0.872 | 1/8 | 7/8 |
+| EGFR | 11,185 | 29.7% | 0.870 | 0.738 | 0.885 | 0/8 | 8/8 |
+| JAK2 | 12,680 | 34.5% | 0.921 | 0.879 | 0.918 | 1/8 | 7/8 |
+
+**Reading the table**:
+- All three kinases hit AUC ≥ 0.87 with scaffold split → ECFP4 pipeline
+  is "good enough" baseline regardless of which kinase.
+- SAE R² 0.87–0.92 across the board → SAR-narrow vs diverse distinction
+  is **not visible** on ECFP4 features (see PREMISES H2 — Uni-Mol
+  measurement is the load-bearing test).
+- MMP series-local fraction 0–12.5% with the default 8 SMIRKS — the
+  preset transformations apply broadly. Probing kinase MMP "scaffold-
+  bound" claim requires data-mined MMPs (deferred).
+
+### Time-split AUC vs cutoff (BRAF, ECFP4 scaffold)
+
+```
+cutoff    n_train  n_test   AUC
+2010      998      4753     0.548
+2012      1572     4179     0.569
+2014      2783     2968     0.603
+2016      3647     2104     0.859
+2018      5092     659      0.730  (small n_test — noisy)
+2020      5448     303      0.875  (very small n_test)
+```
+
+→ **2014/2015 chemical-space discontinuity**. Pre-2014 training does
+not predict post-2014 BRAF inhibitors at useful accuracy.
+This is PREMISES H5 (the strongest single finding of the extension).
+
+### Publication-bias mitigation effect (T-E2)
+
+| Variant | N molecules | N active | active% |
+|---------|-------------|----------|---------|
+| BRAF default (pchembl-only) | 5,751 | 2,350 | 40.9% |
+| BRAF + null-pchembl inactives | 8,671 | 2,350 | 27.1% |
+
+Adding "null pchembl but standard_value present" rows as inactives
+boosts the inactive pool by 2,920 molecules (+50%) and drops active%
+to 27.1%. Whether this *improves* model honesty depends on whether
+those rows are truly inactive — see
+`scripts/download_chembl_target.py` per_molecule_with_null_inactives
+docstring for the caveat.
+
+### MMP grid (BRAF, inactive subset × series-local threshold)
+
+| Subset | thr=2 | thr=3 | thr=5 |
+|--------|-------|-------|-------|
+| 500 | 0 | 0 | 0 |
+| 1500 | 0 | 0 | 0 |
+| 3401 (full) | 0 | 0 | 0 |
+
+Zero series-local rules across all 9 cells. **The default SMIRKS
+transformations are too generic to test scaffold-locality** — every
+rule reaches > 5 distinct scaffolds. This invalidates PREMISES H4 for
+the current transformation set (does not invalidate the Auer 2016
+claim, which is about data-mined MMPs).
