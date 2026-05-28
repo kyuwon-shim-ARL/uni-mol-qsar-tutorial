@@ -1,0 +1,72 @@
+{
+  "locked": true,
+  "lock_id": "20260527T064300Z-cc",
+  "source_skill": "cc",
+  "converged_at": "2026-05-27T06:43:00Z",
+  "rounds": 1,
+  "final_verdict": "EXECUTING",
+  "ticket_id": "EXP-20260527154017",
+  "ticket_summary": "QSAR 평가 정직성 강화 cycle 1 v3 (tcrit 반영). ECFP4 path 전부 완료, GPU 작업은 runpod 게이트 대기.",
+  "ticket_ref": ".omc/tickets/EXP-20260527154017.md",
+  "ticket_file": ".omc/tickets/EXP-20260527154017.md",
+  "outputs": [
+    ".omc/tickets/EXP-20260527154017.md",
+    "tests/test_hit_call.py",
+    "scripts/check_unimol_cache.py",
+    "examples/run_split_comparison.py",
+    "examples/cleanlab_audit.py",
+    "data/external/README.md",
+    "src/qsar_tutorial/data.py",
+    "src/qsar_tutorial/model.py",
+    "src/qsar_tutorial/shap_layer.py",
+    "src/qsar_tutorial/report.py",
+    "requirements.txt",
+    "docs/EXPECTED_OUTPUTS.md",
+    "reports/20260527_split-compare_ecfp4.html",
+    "reports/20260527_split-compare_ecfp4.json",
+    "reports/20260527_cleanlab_flagged.csv",
+    "reports/20260527_cleanlab_audit.json"
+  ],
+  "tier": 1,
+  "degradation_level": "normal",
+  "convergence_scores": {"NEW_HIGH": 0, "RESOLVED": 1.0, "STRUCTURAL": false},
+  "integrity_check": {"status": "SKIP", "warnings": [], "checked_at": "2026-05-27T06:43:00Z"},
+  "execution_progress": {
+    "started_at": "2026-05-27T06:50:00Z",
+    "completed_tasks": [
+      "T0",
+      "T3a-verify",
+      "T3b-verify",
+      "T1-code",
+      "T1-ecfp4-run",
+      "T4-code",
+      "T4-ecfp4-run",
+      "T2-code",
+      "T2-run",
+      "T5a-gate"
+    ],
+    "pending_tasks": [
+      "T1-unimol-run",
+      "T4-unimol-run",
+      "T5b"
+    ],
+    "current_task": null,
+    "blocked_on": "runpod-mcp run_preflight gate (Uni-Mol GPU launch)",
+    "last_checkpoint": "2026-05-27T07:38:00Z"
+  },
+  "key_results": {
+    "T1_split_gap": {"AUC": 0.0076, "AUPRC": 0.059, "featurizer": "ecfp4"},
+    "T1_random": {"AUC": 0.9104, "AUPRC": 0.337, "fold_std": 0.005},
+    "T1_scaffold": {"AUC": 0.9029, "AUPRC": 0.278, "fold_std": 0.021},
+    "T4_stable_features_5of5": "f389, f314, f41, f1357, f1855 (scaffold split, mean_rank ≤ 5.8)",
+    "T2_paired_diff_auprc": -0.094,
+    "T2_paired_ci95": [-0.119, -0.071],
+    "T2_permutation_p": 0.001,
+    "T2_flagged_active_pct": "85/689 = 12.3% (circular-flag risk confirmed)"
+  },
+  "state_files": [
+    ".omc/state/critique-lock.json",
+    ".omc/state/critique-round-1.json",
+    ".omc/tickets/EXP-20260527154017.md"
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "n_total": 24120,
+  "n_flagged": 1691,
+  "n_flagged_active": 85,
+  "A": {
+    "AUPRC": 0.33690917532822184,
+    "enrich@100": 25.905370101596517
+  },
+  "B": {
+    "AUPRC": 0.7309214629032893,
+    "N": 22429
+  },
+  "diff": {
+    "mean": -0.0944685362539214,
+    "ci95_low": -0.1191888209505951,
+    "ci95_high": -0.07120252794910366,
+    "permutation_p_value": 0.000999000999000999,
+    "observed_diff": -0.09524290650372036
+  },
+  "review_csv": "reports/20260527_cleanlab_flagged.csv",
+  "honest_note": "\u0394 AUPRC near zero or negative is a valid outcome and is reported as-is. Do NOT cherry-pick the bootstrap iteration that supports the desired conclusion."
+}
