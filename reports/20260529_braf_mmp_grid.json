@@ -1,0 +1,538 @@
+{
+  "target": "braf",
+  "n_total_inactive": 3401,
+  "subsets_tested": [
+    500,
+    1500,
+    0
+  ],
+  "thresholds_tested": [
+    2,
+    3,
+    5
+  ],
+  "cells": [
+    {
+      "inactive_subset": 500,
+      "series_local_threshold": 2,
+      "n_rules_total": 8,
+      "n_series_local": 0,
+      "n_cross_series": 8,
+      "series_local_fraction": 0.0,
+      "rule_scaffold_counts": [
+        {
+          "name": "add_COOH_aromatic",
+          "n_scaffolds": 357,
+          "delta_p_mean": 0.0011058724806644023,
+          "ci_excl_zero": false
+        },
+        {
+          "name": "add_F_aromatic",
+          "n_scaffolds": 357,
+          "delta_p_mean": 0.026406274979934096,
+          "ci_excl_zero": true
+        },
+        {
+          "name": "add_Cl_aromatic",
+          "n_scaffolds": 357,
+          "delta_p_mean": 0.020549161847680807,
+          "ci_excl_zero": true
+        },
+        {
+          "name": "add_OH_aromatic",
+          "n_scaffolds": 357,
+          "delta_p_mean": 0.04417481709225103,
+          "ci_excl_zero": true
+        },
+        {
+          "name": "add_methyl_aromatic",
+          "n_scaffolds": 357,
+          "delta_p_mean": 0.013925534517038613,
+          "ci_excl_zero": true
+        },
+        {
+          "name": "add_NH2_aromatic",
+          "n_scaffolds": 357,
+          "delta_p_mean": 0.007427793212700635,
+          "ci_excl_zero": false
+        },
+        {
+          "name": "amidine_to_propargylamine",
+          "n_scaffolds": 5,
+          "delta_p_mean": 0.006248873192816973,
+          "ci_excl_zero": false
+        },
+        {
+          "name": "primary_amine_to_propargyl",
+          "n_scaffolds": 8,
+          "delta_p_mean": -0.008183940958518248,
+          "ci_excl_zero": false
+        }
+      ]
+    },
+    {
+      "inactive_subset": 500,
+      "series_local_threshold": 3,
+      "n_rules_total": 8,
+      "n_series_local": 0,
+      "n_cross_series": 8,
+      "series_local_fraction": 0.0,
+      "rule_scaffold_counts": [
+        {
+          "name": "add_COOH_aromatic",
+          "n_scaffolds": 357,
+          "delta_p_mean": 0.0011058724806644023,
+          "ci_excl_zero": false
+        },
+        {
+          "name": "add_F_aromatic",
+          "n_scaffolds": 357,
+          "delta_p_mean": 0.026406274979934096,
+          "ci_excl_zero": true
+        },
+        {
+          "name": "add_Cl_aromatic",
+          "n_scaffolds": 357,
+          "delta_p_mean": 0.020549161847680807,
+          "ci_excl_zero": true
+        },
+        {
+          "name": "add_OH_aromatic",
+          "n_scaffolds": 357,
+          "delta_p_mean": 0.04417481709225103,
+          "ci_excl_zero": true
+        },
+        {
+          "name": "add_methyl_aromatic",
+          "n_scaffolds": 357,
+          "delta_p_mean": 0.013925534517038613,
+          "ci_excl_zero": true
+        },
+        {
+          "name": "add_NH2_aromatic",
+          "n_scaffolds": 357,
+          "delta_p_mean": 0.007427793212700635,
+          "ci_excl_zero": false
+        },
+        {
+          "name": "amidine_to_propargylamine",
+          "n_scaffolds": 5,
+          "delta_p_mean": 0.006248873192816973,
+          "ci_excl_zero": false
+        },
+        {
+          "name": "primary_amine_to_propargyl",
+          "n_scaffolds": 8,
+          "delta_p_mean": -0.008183940958518248,
+          "ci_excl_zero": false
+        }
+      ]
+    },
+    {
+      "inactive_subset": 500,
+      "series_local_threshold": 5,
+      "n_rules_total": 8,
+      "n_series_local": 0,
+      "n_cross_series": 8,
+      "series_local_fraction": 0.0,
+      "rule_scaffold_counts": [
+        {
+          "name": "add_COOH_aromatic",
+          "n_scaffolds": 357,
+          "delta_p_mean": 0.0011058724806644023,
+          "ci_excl_zero": false
+        },
+        {
+          "name": "add_F_aromatic",
+          "n_scaffolds": 357,
+          "delta_p_mean": 0.026406274979934096,
+          "ci_excl_zero": true
+        },
+        {
+          "name": "add_Cl_aromatic",
+          "n_scaffolds": 357,
+          "delta_p_mean": 0.020549161847680807,
+          "ci_excl_zero": true
+        },
+        {
+          "name": "add_OH_aromatic",
+          "n_scaffolds": 357,
+          "delta_p_mean": 0.04417481709225103,
+          "ci_excl_zero": true
+        },
+        {
+          "name": "add_methyl_aromatic",
+          "n_scaffolds": 357,
+          "delta_p_mean": 0.013925534517038613,
+          "ci_excl_zero": true
+        },
+        {
+          "name": "add_NH2_aromatic",
+          "n_scaffolds": 357,
+          "delta_p_mean": 0.007427793212700635,
+          "ci_excl_zero": false
+        },
+        {
+          "name": "amidine_to_propargylamine",
+          "n_scaffolds": 5,
+          "delta_p_mean": 0.006248873192816973,
+          "ci_excl_zero": false
+        },
+        {
+          "name": "primary_amine_to_propargyl",
+          "n_scaffolds": 8,
+          "delta_p_mean": -0.008183940958518248,
+          "ci_excl_zero": false
+        }
+      ]
+    },
+    {
+      "inactive_subset": 1500,
+      "series_local_threshold": 2,
+      "n_rules_total": 8,
+      "n_series_local": 0,
+      "n_cross_series": 8,
+      "series_local_fraction": 0.0,
+      "rule_scaffold_counts": [
+        {
+          "name": "add_COOH_aromatic",
+          "n_scaffolds": 772,
+          "delta_p_mean": 0.0022315446220648786,
+          "ci_excl_zero": false
+        },
+        {
+          "name": "add_F_aromatic",
+          "n_scaffolds": 772,
+          "delta_p_mean": 0.02694500541019564,
+          "ci_excl_zero": true
+        },
+        {
+          "name": "add_Cl_aromatic",
+          "n_scaffolds": 772,
+          "delta_p_mean": 0.01850990995330115,
+          "ci_excl_zero": true
+        },
+        {
+          "name": "add_OH_aromatic",
+          "n_scaffolds": 772,
+          "delta_p_mean": 0.040206967028634,
+          "ci_excl_zero": true
+        },
+        {
+          "name": "add_methyl_aromatic",
+          "n_scaffolds": 772,
+          "delta_p_mean": 0.014520361397104959,
+          "ci_excl_zero": true
+        },
+        {
+          "name": "add_NH2_aromatic",
+          "n_scaffolds": 772,
+          "delta_p_mean": 0.007042687406763434,
+          "ci_excl_zero": true
+        },
+        {
+          "name": "amidine_to_propargylamine",
+          "n_scaffolds": 9,
+          "delta_p_mean": 0.023640858009457588,
+          "ci_excl_zero": true
+        },
+        {
+          "name": "primary_amine_to_propargyl",
+          "n_scaffolds": 17,
+          "delta_p_mean": -0.011574369040317833,
+          "ci_excl_zero": false
+        }
+      ]
+    },
+    {
+      "inactive_subset": 1500,
+      "series_local_threshold": 3,
+      "n_rules_total": 8,
+      "n_series_local": 0,
+      "n_cross_series": 8,
+      "series_local_fraction": 0.0,
+      "rule_scaffold_counts": [
+        {
+          "name": "add_COOH_aromatic",
+          "n_scaffolds": 772,
+          "delta_p_mean": 0.0022315446220648786,
+          "ci_excl_zero": false
+        },
+        {
+          "name": "add_F_aromatic",
+          "n_scaffolds": 772,
+          "delta_p_mean": 0.02694500541019564,
+          "ci_excl_zero": true
+        },
+        {
+          "name": "add_Cl_aromatic",
+          "n_scaffolds": 772,
+          "delta_p_mean": 0.01850990995330115,
+          "ci_excl_zero": true
+        },
+        {
+          "name": "add_OH_aromatic",
+          "n_scaffolds": 772,
+          "delta_p_mean": 0.040206967028634,
+          "ci_excl_zero": true
+        },
+        {
+          "name": "add_methyl_aromatic",
+          "n_scaffolds": 772,
+          "delta_p_mean": 0.014520361397104959,
+          "ci_excl_zero": true
+        },
+        {
+          "name": "add_NH2_aromatic",
+          "n_scaffolds": 772,
+          "delta_p_mean": 0.007042687406763434,
+          "ci_excl_zero": true
+        },
+        {
+          "name": "amidine_to_propargylamine",
+          "n_scaffolds": 9,
+          "delta_p_mean": 0.023640858009457588,
+          "ci_excl_zero": true
+        },
+        {
+          "name": "primary_amine_to_propargyl",
+          "n_scaffolds": 17,
+          "delta_p_mean": -0.011574369040317833,
+          "ci_excl_zero": false
+        }
+      ]
+    },
+    {
+      "inactive_subset": 1500,
+      "series_local_threshold": 5,
+      "n_rules_total": 8,
+      "n_series_local": 0,
+      "n_cross_series": 8,
+      "series_local_fraction": 0.0,
+      "rule_scaffold_counts": [
+        {
+          "name": "add_COOH_aromatic",
+          "n_scaffolds": 772,
+          "delta_p_mean": 0.0022315446220648786,
+          "ci_excl_zero": false
+        },
+        {
+          "name": "add_F_aromatic",
+          "n_scaffolds": 772,
+          "delta_p_mean": 0.02694500541019564,
+          "ci_excl_zero": true
+        },
+        {
+          "name": "add_Cl_aromatic",
+          "n_scaffolds": 772,
+          "delta_p_mean": 0.01850990995330115,
+          "ci_excl_zero": true
+        },
+        {
+          "name": "add_OH_aromatic",
+          "n_scaffolds": 772,
+          "delta_p_mean": 0.040206967028634,
+          "ci_excl_zero": true
+        },
+        {
+          "name": "add_methyl_aromatic",
+          "n_scaffolds": 772,
+          "delta_p_mean": 0.014520361397104959,
+          "ci_excl_zero": true
+        },
+        {
+          "name": "add_NH2_aromatic",
+          "n_scaffolds": 772,
+          "delta_p_mean": 0.007042687406763434,
+          "ci_excl_zero": true
+        },
+        {
+          "name": "amidine_to_propargylamine",
+          "n_scaffolds": 9,
+          "delta_p_mean": 0.023640858009457588,
+          "ci_excl_zero": true
+        },
+        {
+          "name": "primary_amine_to_propargyl",
+          "n_scaffolds": 17,
+          "delta_p_mean": -0.011574369040317833,
+          "ci_excl_zero": false
+        }
+      ]
+    },
+    {
+      "inactive_subset": 3401,
+      "series_local_threshold": 2,
+      "n_rules_total": 8,
+      "n_series_local": 0,
+      "n_cross_series": 8,
+      "series_local_fraction": 0.0,
+      "rule_scaffold_counts": [
+        {
+          "name": "add_COOH_aromatic",
+          "n_scaffolds": 1374,
+          "delta_p_mean": 0.00258987718331607,
+          "ci_excl_zero": false
+        },
+        {
+          "name": "add_F_aromatic",
+          "n_scaffolds": 1374,
+          "delta_p_mean": 0.027719684790105715,
+          "ci_excl_zero": true
+        },
+        {
+          "name": "add_Cl_aromatic",
+          "n_scaffolds": 1374,
+          "delta_p_mean": 0.020043433227712414,
+          "ci_excl_zero": true
+        },
+        {
+          "name": "add_OH_aromatic",
+          "n_scaffolds": 1374,
+          "delta_p_mean": 0.04160920210146794,
+          "ci_excl_zero": true
+        },
+        {
+          "name": "add_methyl_aromatic",
+          "n_scaffolds": 1374,
+          "delta_p_mean": 0.01446886355545064,
+          "ci_excl_zero": true
+        },
+        {
+          "name": "add_NH2_aromatic",
+          "n_scaffolds": 1374,
+          "delta_p_mean": 0.007826038562810179,
+          "ci_excl_zero": true
+        },
+        {
+          "name": "amidine_to_propargylamine",
+          "n_scaffolds": 16,
+          "delta_p_mean": 0.00838532414109934,
+          "ci_excl_zero": false
+        },
+        {
+          "name": "primary_amine_to_propargyl",
+          "n_scaffolds": 25,
+          "delta_p_mean": 0.001590155191340689,
+          "ci_excl_zero": false
+        }
+      ]
+    },
+    {
+      "inactive_subset": 3401,
+      "series_local_threshold": 3,
+      "n_rules_total": 8,
+      "n_series_local": 0,
+      "n_cross_series": 8,
+      "series_local_fraction": 0.0,
+      "rule_scaffold_counts": [
+        {
+          "name": "add_COOH_aromatic",
+          "n_scaffolds": 1374,
+          "delta_p_mean": 0.00258987718331607,
+          "ci_excl_zero": false
+        },
+        {
+          "name": "add_F_aromatic",
+          "n_scaffolds": 1374,
+          "delta_p_mean": 0.027719684790105715,
+          "ci_excl_zero": true
+        },
+        {
+          "name": "add_Cl_aromatic",
+          "n_scaffolds": 1374,
+          "delta_p_mean": 0.020043433227712414,
+          "ci_excl_zero": true
+        },
+        {
+          "name": "add_OH_aromatic",
+          "n_scaffolds": 1374,
+          "delta_p_mean": 0.04160920210146794,
+          "ci_excl_zero": true
+        },
+        {
+          "name": "add_methyl_aromatic",
+          "n_scaffolds": 1374,
+          "delta_p_mean": 0.01446886355545064,
+          "ci_excl_zero": true
+        },
+        {
+          "name": "add_NH2_aromatic",
+          "n_scaffolds": 1374,
+          "delta_p_mean": 0.007826038562810179,
+          "ci_excl_zero": true
+        },
+        {
+          "name": "amidine_to_propargylamine",
+          "n_scaffolds": 16,
+          "delta_p_mean": 0.00838532414109934,
+          "ci_excl_zero": false
+        },
+        {
+          "name": "primary_amine_to_propargyl",
+          "n_scaffolds": 25,
+          "delta_p_mean": 0.001590155191340689,
+          "ci_excl_zero": false
+        }
+      ]
+    },
+    {
+      "inactive_subset": 3401,
+      "series_local_threshold": 5,
+      "n_rules_total": 8,
+      "n_series_local": 0,
+      "n_cross_series": 8,
+      "series_local_fraction": 0.0,
+      "rule_scaffold_counts": [
+        {
+          "name": "add_COOH_aromatic",
+          "n_scaffolds": 1374,
+          "delta_p_mean": 0.00258987718331607,
+          "ci_excl_zero": false
+        },
+        {
+          "name": "add_F_aromatic",
+          "n_scaffolds": 1374,
+          "delta_p_mean": 0.027719684790105715,
+          "ci_excl_zero": true
+        },
+        {
+          "name": "add_Cl_aromatic",
+          "n_scaffolds": 1374,
+          "delta_p_mean": 0.020043433227712414,
+          "ci_excl_zero": true
+        },
+        {
+          "name": "add_OH_aromatic",
+          "n_scaffolds": 1374,
+          "delta_p_mean": 0.04160920210146794,
+          "ci_excl_zero": true
+        },
+        {
+          "name": "add_methyl_aromatic",
+          "n_scaffolds": 1374,
+          "delta_p_mean": 0.01446886355545064,
+          "ci_excl_zero": true
+        },
+        {
+          "name": "add_NH2_aromatic",
+          "n_scaffolds": 1374,
+          "delta_p_mean": 0.007826038562810179,
+          "ci_excl_zero": true
+        },
+        {
+          "name": "amidine_to_propargylamine",
+          "n_scaffolds": 16,
+          "delta_p_mean": 0.00838532414109934,
+          "ci_excl_zero": false
+        },
+        {
+          "name": "primary_amine_to_propargyl",
+          "n_scaffolds": 25,
+          "delta_p_mean": 0.001590155191340689,
+          "ci_excl_zero": false
+        }
+      ]
+    }
+  ]
+}

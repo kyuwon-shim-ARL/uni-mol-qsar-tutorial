@@ -1,0 +1,24 @@
+{
+  "csv": "data/processed/egfr.csv",
+  "features": "ecfp4",
+  "split_mode": "scaffold",
+  "n": 11185,
+  "active_pct": 0.29682610639248996,
+  "oof": {
+    "AUC": 0.8697019163749724,
+    "AUPRC": 0.7383264653602299,
+    "MCC@0.5": 0.5479656468885404
+  },
+  "sae": {
+    "latent_dim": 2048,
+    "dead_ratio": 0.0,
+    "r2_median": 0.8846883475780487,
+    "r2_above_05": 10,
+    "r2_total": 10
+  },
+  "mmp_n_rules_excl_zero": 7,
+  "mmp_n_cross_series": 8,
+  "mmp_n_series_local": 0,
+  "time_split": null,
+  "external": null
+}

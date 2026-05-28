@@ -21,6 +21,21 @@ from typing import Callable, Iterable
 import numpy as np
 from rdkit import Chem
 from rdkit.Chem import AllChem
+from rdkit.Chem.Scaffolds import MurckoScaffold
+
+# A rule observed on N or fewer distinct Bemis-Murcko scaffolds is treated as
+# series-local. Three is the working threshold — adjust per dataset. Auer et
+# al. 2016 (PMC5198793) is the basis for treating low-scaffold-count rules
+# as scaffold-bound rather than general SAR.
+SERIES_LOCAL_SCAFFOLD_THRESHOLD = 3
+
+
+def _scaffold(smi: str) -> str:
+    try:
+        sc = MurckoScaffold.MurckoScaffoldSmiles(smiles=smi, includeChirality=False)
+        return sc if sc else f"__acyclic__{smi}"
+    except Exception:
+        return f"__invalid__{smi}"
 
 
 # Educational starter set. Easy to extend.
@@ -48,6 +63,8 @@ class TransformResult:
     delta_p_ci95: tuple[float, float]
     exemplar_smiles: str | None
     exemplar_delta: float
+    n_distinct_scaffolds: int = 0
+    is_series_local: bool = False
 
 
 def apply_transform(parent_smiles: str, smirks: str, max_products: int = 1) -> list[str]:
@@ -114,6 +131,7 @@ def scan(
     parents = list(inactive_smiles)
     parent_scores = score_fn(parents)
     parent_score_by_smi = dict(zip(parents, parent_scores))
+    parent_scaffold_by_smi = {p: _scaffold(p) for p in parents}
 
     results: list[TransformResult] = []
     for name, smirks in transformations.items():
@@ -141,15 +159,18 @@ def scan(
         # Single batched score call for efficiency.
         child_scores = score_fn(all_children)
 
+        contributing_scaffolds: set[str] = set()
         for (p_smi, k), c_smi, c_score in zip(owner, all_children, child_scores):
             d = float(c_score - parent_score_by_smi[p_smi])
             deltas.append(d)
+            contributing_scaffolds.add(parent_scaffold_by_smi[p_smi])
             if d > best_delta:
                 best_delta = d
                 best_smi = c_smi
 
         deltas_arr = np.asarray(deltas)
         lo, hi = _bca_ci(deltas_arr)
+        n_scaf = len(contributing_scaffolds)
         results.append(
             TransformResult(
                 name=name,
@@ -160,6 +181,8 @@ def scan(
                 delta_p_ci95=(lo, hi),
                 exemplar_smiles=best_smi,
                 exemplar_delta=float(best_delta),
+                n_distinct_scaffolds=n_scaf,
+                is_series_local=n_scaf < SERIES_LOCAL_SCAFFOLD_THRESHOLD,
             )
         )
     return results

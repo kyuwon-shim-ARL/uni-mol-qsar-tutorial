@@ -10,8 +10,10 @@ from __future__ import annotations
 from typing import List, Tuple
 
 import numpy as np
-from rdkit import Chem
-from rdkit.Chem import AllChem
+from rdkit import Chem, RDLogger
+from rdkit.Chem import rdFingerprintGenerator
+
+RDLogger.DisableLog("rdApp.*")
 
 
 def featurize_ecfp4(smiles: List[str], n_bits: int = 2048) -> Tuple[np.ndarray, np.ndarray]:
@@ -20,13 +22,14 @@ def featurize_ecfp4(smiles: List[str], n_bits: int = 2048) -> Tuple[np.ndarray, 
     valid_mask is True for SMILES that parsed; rows in X are aligned with
     the input list (invalid rows are zero-filled and masked out).
     """
+    gen = rdFingerprintGenerator.GetMorganGenerator(radius=2, fpSize=n_bits)
     X = np.zeros((len(smiles), n_bits), dtype=np.uint8)
     valid = np.zeros(len(smiles), dtype=bool)
     for i, smi in enumerate(smiles):
         mol = Chem.MolFromSmiles(smi)
         if mol is None:
             continue
-        fp = AllChem.GetMorganFingerprintAsBitVect(mol, radius=2, nBits=n_bits)
+        fp = gen.GetFingerprint(mol)
         X[i] = np.frombuffer(bytes(fp.ToBitString(), "utf-8"), dtype=np.uint8) - ord("0")
         valid[i] = True
     return X, valid

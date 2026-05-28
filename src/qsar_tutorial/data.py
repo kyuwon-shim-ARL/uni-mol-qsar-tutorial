@@ -136,6 +136,56 @@ def scaffold_folds(
     return list(gkf.split(np.zeros_like(ds.y), ds.y, groups=groups))
 
 
+def time_split_indices(
+    years: np.ndarray, train_year_max: int
+) -> tuple[np.ndarray, np.ndarray]:
+    """Chronological train/test split using publication year.
+
+    Train  : molecules with year <= train_year_max  (or year is NaN)
+    Test   : molecules with year >  train_year_max
+
+    NaN years go to train (conservative — they cannot be future). The
+    caller is expected to choose train_year_max so the test split is
+    large enough (e.g. dataset median or p75 quantile).
+
+    Sheridan 2013 (J. Chem. Inf. Model. 53, 783-790) established this
+    as the practical realistic benchmark for QSAR — past predicts future,
+    not random hold-out.
+    """
+    years = np.asarray(years, dtype=float)
+    in_train = (years <= train_year_max) | np.isnan(years)
+    train_idx = np.where(in_train)[0]
+    test_idx = np.where(~in_train)[0]
+    return train_idx, test_idx
+
+
+def load_years(csv_path: str | Path, smiles: np.ndarray) -> np.ndarray:
+    """Read min_document_year (or document_year) aligned to a SMILES order.
+
+    Returns NaN for rows where the CSV has no year or the SMILES is not
+    in the CSV. Useful when combining time_split_indices with the
+    deduplicated Dataset object returned by load_coadd_pa.
+    """
+    df = pd.read_csv(csv_path)
+    col = "min_document_year" if "min_document_year" in df.columns else (
+        "document_year" if "document_year" in df.columns else None
+    )
+    if col is None:
+        return np.full(len(smiles), np.nan)
+    # Build a dict from canonical SMILES -> year (first occurrence)
+    canon = []
+    for smi in df["canonical_smiles"].fillna(""):
+        mol = Chem.MolFromSmiles(smi)
+        canon.append(Chem.MolToSmiles(mol, canonical=True) if mol else None)
+    df = df.assign(_canon=canon).dropna(subset=["_canon"])
+    year_map = (
+        df.groupby("_canon")[col].min().to_dict()
+    )
+    return np.array(
+        [float(year_map.get(s, float("nan"))) for s in smiles], dtype=float
+    )
+
+
 def fold_label_counts(ds: Dataset, folds) -> list[dict]:
     """Per-fold (n_train, n_val, n_active_*) — surface degenerate folds.
 

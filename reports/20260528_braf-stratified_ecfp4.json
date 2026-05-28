@@ -1,0 +1,24 @@
+{
+  "csv": "data/processed/braf.csv",
+  "features": "ecfp4",
+  "split_mode": "stratified",
+  "n": 5751,
+  "active_pct": 0.4086245870283429,
+  "oof": {
+    "AUC": 0.9280221712012113,
+    "AUPRC": 0.8966503261069606,
+    "MCC@0.5": 0.6866374152708736
+  },
+  "sae": {
+    "latent_dim": 2048,
+    "dead_ratio": 0.0,
+    "r2_median": 0.8713546395301819,
+    "r2_above_05": 10,
+    "r2_total": 10
+  },
+  "mmp_n_rules_excl_zero": 7,
+  "mmp_n_cross_series": 7,
+  "mmp_n_series_local": 1,
+  "time_split": null,
+  "external": null
+}

@@ -1,0 +1,24 @@
+{
+  "csv": "data/processed/coadd_pa.csv",
+  "features": "ecfp4",
+  "split_mode": "stratified",
+  "n": 24120,
+  "active_pct": 0.028565505804311775,
+  "oof": {
+    "AUC": 0.9104419492145637,
+    "AUPRC": 0.3369091753282218,
+    "MCC@0.5": 0.3312505720192711
+  },
+  "sae": {
+    "latent_dim": 2048,
+    "dead_ratio": 0.0,
+    "r2_median": 0.8866830170154572,
+    "r2_above_05": 10,
+    "r2_total": 10
+  },
+  "mmp_n_rules_excl_zero": 7,
+  "mmp_n_cross_series": 8,
+  "mmp_n_series_local": 0,
+  "time_split": null,
+  "external": null
+}

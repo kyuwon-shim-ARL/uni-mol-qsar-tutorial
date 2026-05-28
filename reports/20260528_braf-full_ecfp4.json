@@ -1,0 +1,38 @@
+{
+  "csv": "data/processed/braf.csv",
+  "features": "ecfp4",
+  "split_mode": "scaffold",
+  "n": 5751,
+  "active_pct": 0.4086245870283429,
+  "oof": {
+    "AUC": 0.9094353975989541,
+    "AUPRC": 0.8778267728188869,
+    "MCC@0.5": 0.6373472236700618
+  },
+  "sae": {
+    "latent_dim": 2048,
+    "dead_ratio": 0.0,
+    "r2_median": 0.871525228023529,
+    "r2_above_05": 10,
+    "r2_total": 10
+  },
+  "mmp_n_rules_excl_zero": 7,
+  "mmp_n_cross_series": 7,
+  "mmp_n_series_local": 1,
+  "time_split": {
+    "cutoff": 2015,
+    "n_train": 2961,
+    "n_test": 2790,
+    "train_active_pct": 0.37115839243498816,
+    "test_active_pct": 0.4483870967741935,
+    "AUC": 0.6111347439267558,
+    "AUPRC": 0.5031884809388032
+  },
+  "external": {
+    "csv": "data/external/braf_bindingdb.csv",
+    "n": 435,
+    "active_pct": 0.41379310344827586,
+    "AUC": 0.8003050108932461,
+    "AUPRC": 0.763325529809167
+  }
+}

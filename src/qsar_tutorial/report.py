@@ -64,6 +64,28 @@ TEMPLATE = Template(
 {% endfor %}
 </tbody></table>
 
+{% if shap_scaffold_diversity %}
+<h2>2a. SHAP scaffold scope (top features)</h2>
+<div class="caveat">
+  For each top SHAP feature (ECFP4 path only), we count distinct Bemis-Murcko
+  scaffolds among compounds where the feature is "on". Low diversity = the
+  attribution may be series-bound, not a general structure–activity rule.
+</div>
+<table>
+<thead><tr><th>Feature</th><th>n_compounds_on</th><th>n_distinct_scaffolds</th><th>scope</th></tr></thead>
+<tbody>
+{% for row in shap_scaffold_diversity %}
+<tr>
+<td><code>{{ row.feature }}</code></td>
+<td>{{ row.n_compounds_on }}</td>
+<td>{{ row.n_distinct_scaffolds }}</td>
+<td>{% if row.scaffold_bound %}<strong>scaffold-bound</strong>{% else %}broad{% endif %}</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+{% endif %}
+
 {% if stability_rows %}
 <h2>2b. SHAP stability across {{ stability_n_folds }} folds</h2>
 <div class="caveat">
@@ -138,6 +160,8 @@ TEMPLATE = Template(
 <th>Δp(active) mean</th>
 <th>95% CI</th>
 <th>Exemplar Δp</th>
+<th>n_scaffolds</th>
+<th>scope</th>
 </tr>
 </thead>
 <tbody>
@@ -148,6 +172,8 @@ TEMPLATE = Template(
 <td>{{ "%.3f"|format(r.delta_p_mean) }}</td>
 <td>[{{ "%.3f"|format(r.delta_p_ci95[0]) }}, {{ "%.3f"|format(r.delta_p_ci95[1]) }}]</td>
 <td>{{ "%.3f"|format(r.exemplar_delta) }}</td>
+<td>{{ r.get("n_distinct_scaffolds", "—") }}</td>
+<td>{% if r.get("is_series_local") %}<strong>series-local</strong>{% else %}cross-series{% endif %}</td>
 </tr>
 {% endfor %}
 </tbody>
@@ -156,7 +182,70 @@ TEMPLATE = Template(
   <strong>Hypothesis-generating only.</strong> A 95% CI excluding 0 is necessary
   but not sufficient. Promotion to "validated rule" requires wet-lab confirmation
   with n ≥ 10 analogues. See docs/BACKGROUND.md §5.3.
+  <br><strong>Scope column:</strong> a rule observed on fewer than 3 distinct
+  Murcko scaffolds is flagged <code>series-local</code>; its mean Δp reflects one
+  chemotype, not a general SAR principle (Auer et al. 2016, PMC5198793).
 </div>
+
+{% if time_split %}
+<h2>4b. Time-split evaluation</h2>
+<p>Trained on molecules with <code>document_year &le; {{ time_split.cutoff }}</code>,
+evaluated on molecules with <code>document_year &gt; {{ time_split.cutoff }}</code>.
+Sheridan 2013-style chronological hold-out — the practical "past predicts future" test.</p>
+<table>
+<thead><tr><th>n_train</th><th>n_test</th><th>train_active%</th><th>test_active%</th><th>AUC</th><th>AUPRC</th></tr></thead>
+<tbody>
+<tr>
+<td>{{ time_split.n_train }}</td>
+<td>{{ time_split.n_test }}</td>
+<td>{{ "%.1f"|format(time_split.train_active_pct * 100) }}%</td>
+<td>{{ "%.1f"|format(time_split.test_active_pct * 100) }}%</td>
+<td>{{ "%.3f"|format(time_split.AUC) }}</td>
+<td>{{ "%.3f"|format(time_split.AUPRC) }}</td>
+</tr>
+</tbody>
+</table>
+{% endif %}
+
+{% if external %}
+<h2>4c. External hold-out evaluation</h2>
+<p>Final model (trained on full training set) scored on
+<code>{{ external.csv }}</code> — a genuinely independent set with no
+SMILES overlap with the training data.</p>
+<table>
+<thead><tr><th>n</th><th>active%</th><th>External AUC</th><th>AUPRC</th><th>OOF AUC</th><th>Gap</th></tr></thead>
+<tbody>
+<tr>
+<td>{{ external.n }}</td>
+<td>{{ "%.1f"|format(external.active_pct * 100) }}%</td>
+<td>{{ "%.3f"|format(external.AUC) }}</td>
+<td>{{ "%.3f"|format(external.AUPRC) }}</td>
+<td>{{ "%.3f"|format(external.oof_auc) }}</td>
+<td><strong>{{ "%.3f"|format(external.auc_gap) }}</strong> ({{ external.gap_level }})</td>
+</tr>
+</tbody>
+</table>
+{% if external.gap_level == "severe" %}
+<div class="caveat" style="background:#fdecea;border-left:4px solid #d93025;">
+<strong>🔴 SEVERE COVARIATE SHIFT</strong> — External AUC drop &ge; 0.20.
+Model interpretations should not be reported as generalizable until the
+shift is diagnosed. Likely causes: (1) external set is from a different
+assay protocol, (2) training set has memorized series-bound features, or
+(3) chemical-space differences exceed model coverage.
+</div>
+{% elif external.gap_level == "moderate" %}
+<div class="caveat" style="background:#fff8e1;border-left:4px solid #f5a623;">
+<strong>⚠ MODERATE COVARIATE SHIFT</strong> — External AUC drop in
+[0.10, 0.20). The model partially generalizes. Report both numbers when
+making claims; treat OOF AUC as an upper bound only.
+</div>
+{% else %}
+<div class="caveat" style="background:#e6f4ea;border-left:4px solid #137333;">
+<strong>✓ External AUC within tolerance</strong> — gap &lt; 0.10. Model
+appears to generalize beyond the training corpus.
+</div>
+{% endif %}
+{% endif %}
 
 <h2>5. How to read this report</h2>
 <ol>
@@ -187,6 +276,9 @@ class ReportPayload:
     sae: dict
     mmp_rows: list[dict]
     stability_rows: list[dict] | None = None
+    time_split: dict | None = None
+    external: dict | None = None
+    shap_scaffold_diversity: list[dict] | None = None
     stability_n_folds: int = 0
     split_comparison: list[dict] | None = None
 
