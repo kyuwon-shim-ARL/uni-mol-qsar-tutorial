@@ -1,0 +1,55 @@
+# 2026-05-29 GPU session — GH issues #2 + #5 (Uni-Mol reproducibility + H1 final)
+purpose: BRAF Uni-Mol stratified-vs-scaffold (#5) + CO-ADD Uni-Mol reproducibility (#2)
+approved_budget: 0.25 (per prior turns; user said "GPU 자동 모니터링" = continue)
+actual_cost_total_usd: 0.27   # 0.05 + 0.01 (wedged A40s) + 0.20 (3090 success)
+
+attempts:
+  - pod_id: tmec0r1imriie7
+    gpu: A40 (48GB)
+    datacenter: EU-SE-1
+    result: WEDGED — CUDA "device(s) is/are busy or unavailable" during featurize
+    note: nvidia-smi healthy (0 MiB, Compute Mode Default) but torch.zeros(n).cuda() failed
+    cost_usd: 0.05
+    deleted: true
+  - pod_id: nn2vk750gsrn96
+    gpu: A40 (48GB)
+    datacenter: EU-SE-1
+    result: WEDGED — identical CUDA alloc failure on fresh pod (preflight caught it)
+    note: confirmed bad A40 host pool in EU-SE-1; prior session success was A6000 (different pool)
+    cost_usd: 0.01
+    deleted: true
+  - pod_id: i3wekoy6es1hii
+    gpu: RTX 3090 (24GB)
+    datacenter: EU-CZ-1
+    result: SUCCESS — CUDA preflight passed, both runs completed
+    cost_usd: 0.20
+    wall_min: 26
+    deleted: true
+
+# Lesson learned (added to GPU preflight practice)
+preflight_lesson: |
+  nvidia-smi "healthy" + torch.cuda.is_available()=True is NOT sufficient.
+  Must run an actual allocation: torch.zeros(1000, device='cuda') + reduce.
+  Two EU-SE-1 A40 hosts passed is_available() but failed real alloc with
+  "CUDA-capable device(s) is/are busy or unavailable". Always alloc-preflight
+  BEFORE uploading code / running the job. Switching GPU class (A40→3090)
+  and DC (EU-SE-1→EU-CZ-1) resolved it.
+
+# Results
+results:
+  coadd_unimol_repro:      # GH #2
+    oof_auc: 0.894         # baseline 0.895 (within ±0.01) ✓
+    auprc: 0.259           # baseline 0.256 ✓
+    sae_r2_median: 0.826   # baseline 0.824 (within ±0.05) ✓
+    dead_ratio: 0.000
+    verdict: REPRODUCIBILITY CONFIRMED
+  braf_unimol_splits:      # GH #5
+    stratified_auc: 0.832
+    scaffold_auc: 0.806
+    gap: 0.026             # ECFP4 gap 0.019 — H1 weakly-validated on both
+    sae_r2_median: 0.852
+
+findings:
+  - "#2 CO-ADD Uni-Mol reproducible on fresh GPU (different class) — pipeline stable"
+  - "#5 H1 gap 0.026 on Uni-Mol vs 0.019 ECFP4 — dense embeddings NOT more leak-prone"
+  - "H6 reinforced: Uni-Mol < ECFP4 on both splits (-0.096 strat, -0.103 scaf)"

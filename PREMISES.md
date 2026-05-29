@@ -13,18 +13,25 @@ requires explicit measurement.
 opposite label), random/stratified K-fold AUC overstates generalization by
 ≥ 0.05. Scaffold split (Bemis-Murcko, GroupKFold) is the minimum defense.
 
-**Status**: WEAKLY-VALIDATED on ECFP4 / Uni-Mol PENDING
-**Measurement (2026-05-28, BRAF ECFP4)**:
-- stratified OOF AUC = 0.928
-- scaffold OOF AUC = 0.909
-- gap = **0.019** — below the 0.05 falsification threshold but above 0.
-**Interpretation**: gap is real but smaller than the literature
-expectation. ECFP4 fingerprints may capture series-bound features less
-than dense 3D embeddings; Uni-Mol measurement (blocked on GPU stockout
-2026-05-29) is the final arbiter. WEAKLY-VALIDATED in the sense that
-"scaffold split is the better practice" remains the recommendation, but
-"random K-fold catastrophically inflates AUC" is overstated for ECFP4.
-**Owner**: `data.scaffold_folds`, T4 in `EXPECTED_OUTPUTS.md`.
+**Status**: WEAKLY-VALIDATED on both ECFP4 and Uni-Mol (resolved 2026-05-29, GH #5)
+**Measurement (BRAF, stratified vs scaffold OOF AUC)**:
+
+| Feature | stratified | scaffold | gap |
+|---------|-----------|----------|-----|
+| ECFP4 (2048) | 0.928 | 0.909 | 0.019 |
+| **Uni-Mol (512-d)** | **0.832** | **0.806** | **0.026** |
+
+**Interpretation**: the stratified−scaffold gap is real but small on
+**both** representations (0.019 ECFP4, 0.026 Uni-Mol), well below the
+0.05 falsification threshold. The earlier speculation that dense 3D
+embeddings would show a *larger* leakage gap than sparse fingerprints
+is **not supported** — the gaps are within 0.01 of each other. Final
+verdict: "scaffold split is the better practice" holds (gap > 0, and
+Uni-Mol's is slightly larger), but "random K-fold catastrophically
+inflates AUC (≥0.05)" is overstated for both feature spaces on BRAF.
+The literature's 0.05–0.15 expectation is dataset-specific and does not
+reproduce on this kinase set.
+**Owner**: `data.scaffold_folds`, T4 in `EXPECTED_OUTPUTS.md`, GH #5.
 **dependent_workflows**: `examples/run_full_pipeline.py`.
 
 ### H2 — SAE descriptor recovery R² depends on chemical diversity
@@ -210,6 +217,73 @@ single-number metric** for kinase QSAR. OOF AUC silently averages over
 this temporal break.
 **Owner**: `data.time_split_indices`, T5; `scripts/time_split_sweep.py`.
 **dependent_workflows**: any "predict future BRAF inhibitor" claim.
+
+### H7 — Finetuning Uni-Mol recovers the gap that frozen embeddings lost
+
+**Claim**: H6 showed *frozen* Uni-Mol embeddings (general-chemistry
+pretraining, no target adaptation) lose to ECFP4 on single-target QSAR
+(BRAF: 0.804 vs 0.909). H7 is the sequel: **finetuning** the Uni-Mol
+backbone on the target's labels (backprop through the transformer, not
+just `get_repr`) should adapt the representation to the target and
+close or reverse that −0.105 gap. This is the foundation→finetuning
+paradigm the tutorial currently omits (it uses Uni-Mol frozen only).
+
+**Status**: PLANNED (no measurement yet)
+
+**Test design** (tcrit-hardened, 4 axes — see derivation below):
+
+*Axis 1 — fair comparison (the load-bearing axis):*
+- **Scaffold parity**: all three lanes (ECFP4+XGB / frozen-UniMol+XGB /
+  finetuned-UniMol) use the *same* Bemis-Murcko scaffold folds.
+  Verified feasible: `unimol_tools.MolTrain(split='scaffold')` uses
+  GroupKFold over Murcko scaffolds; `split='select'` accepts precomputed
+  fold ids (0..k−1) for exact parity with the XGB lanes.
+- **From-scratch control** (required): same Uni-Mol architecture,
+  *random init*, trained on the target. Without it a finetuned win only
+  proves "NN > XGBoost", not "pretraining helps". H7 is unfalsifiable
+  without this arm.
+- **Variance**: finetuning is stochastic; report multi-seed mean ± CI,
+  not a single number. The gap to beat (0.105) must exceed the seed
+  spread to be a real finding. (Repo norm: bootstrap CIs, Vina noise
+  floor.)
+- **HP scope**: a fixed, pre-registered hyperparameter budget (LR,
+  epochs, `freeze_layers` depth, early stopping). A finetuned loss from
+  bad HPs must NOT be read as refuting H7 — log the search that was run.
+
+*Axis 2 — which data answers which question:*
+- **TYMS (CHEMBL1952, 874 mol, enzyme)**: tests whether the H6
+  frozen-loss generalizes *beyond kinases*. NOT used for the data-size
+  sweep — 874 is too small to subsample a train curve and keep a stable
+  test set.
+- **BRAF (5,751 mol, already in repo)**: the known frozen-loss case, and
+  the home for any low-data scaling curve (N=200/400/800 with stable
+  held-out). Does finetuning win where frozen lost?
+- TYMS active cutoff is decided by diagnosis (P1's pChEMBL≥8 was set on
+  kinases; re-examine for this enzyme before labelling).
+
+*Axis 3 — cost & external dependency:*
+- Finetuning needs GPU (RunPod) and costs real money — multiplicative:
+  lanes × targets × folds × seeds × (HP points). Hard cost cap +
+  rollback ("stop after TYMS, BRAF is a follow-up") set BEFORE any GPU
+  spend. GPU stockout already bit this project (2026-05-29).
+
+*Axis 4 — recording vs verdict (honesty):*
+- "Measurement obtained" = phase done; "H7 supported/refuted" = finding.
+  Finetuning failing to win does NOT make the phase a failure.
+- Branch to pre-define: if frozen Uni-Mol happens to *win* on TYMS
+  (enzyme SAR ≠ kinase), there is no loss to recover on TYMS and the H7
+  framing falls back to BRAF.
+
+**Falsification**: with scaffold parity + from-scratch control +
+multi-seed CIs + a documented HP budget, finetuned-UniMol AUC ≤ ECFP4
+AUC (within CI) on both TYMS and BRAF refutes H7.
+
+**Owner**: new finetuning lane (`unimol_tools.MolTrain` wrapper); README
+"What this teaches" (Uni-Mol value proposition).
+**dependent_workflows**: any "use the foundation model, not fingerprints"
+recommendation in the tutorial.
+**lineage**: H6 (frozen embedding falsified) → H7 (does finetuning fix
+it). See LANDSCAPE L-20260529-20, L-20260529-21.
 
 ## P-series (procedural premises)
 

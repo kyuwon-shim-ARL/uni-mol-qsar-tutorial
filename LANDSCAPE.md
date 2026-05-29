@@ -211,3 +211,63 @@ The earlier null was a key-granularity artifact — coarse keys collapse
 distinct substituent swaps into one bucket, washing out scaffold-locality.
 Reproduces Auer 2016 at the granularity they used. Implemented as
 `scripts/mmp_mine.py --key-mode mcs`.
+
+### TYMS extension (H7 prep, 2026-05-29)
+
+**L-20260529-24** — refers_to: P1, H7 — polarity: qualifies — source: measured
+*scripts/diagnose_dataset.py on data/processed/tyms.csv*. Human TYMS
+(CHEMBL1952): 874 records → 637 unique molecules. pChEMBL median 6.12
+(vs BRAF 7.68) — a weaker-affinity enzyme literature. Active% by cutoff:
+≥6.0=54.9%, ≥6.5=38.3%, ≥8.0=9.1%. **P1's kinase default (≥8.0) yields
+only 9.1% active (~58 mol) — too sparse; rejected. Cutoff set to 6.0
+(54.9%, balanced).** Confirms tcrit T-cutoff: P1 is kinase-specific, not
+universal. 183 scaffolds, top-10 share 43.2% (more diverse than a single
+kinase). Activity cliffs 5.8% — *below* H1's 0.10 threshold, between
+CO-ADD (0.1%) and BRAF (11.1%): TYMS is a mid-regime enzyme, a useful
+third datapoint for H7 discrimination.
+
+**L-20260529-25** — refers_to: H7, H1 — polarity: supports — source: measured
+*reports/20260529_split-compare_ecfp4.json (tyms)*. ECFP4+XGBoost on
+TYMS: random-split AUC 0.878, **scaffold-split AUC 0.800 (fold_std
+0.069)**, gap +0.079. The scaffold AUC 0.800 is the bar H7's finetuned-
+Uni-Mol lane must beat. The fold_std 0.069 is large — empirically
+confirms tcrit T-variance: a finetuning "win" must exceed ~0.07 to be a
+real finding, not seed/fold noise. Random−scaffold gap +0.079 > H1's
+0.05 → scaffold split is the honest metric here too.
+
+**L-20260529-26** — refers_to: H7 (T-ft-infra) — polarity: supports — source: code-audit
+*unimol_tools.MolTrain (train.py:37; data/split.py:45)*. MolTrain
+natively supports `split='scaffold'` (Bemis-Murcko + GroupKFold,
+identical discipline to the tutorial's `scaffold_folds`) and
+`split='select'` (precomputed fold ids 0..k−1), plus `freeze_layers` for
+freeze-depth control. The finetuning lane can therefore reuse the *exact
+same* scaffold folds as the ECFP4/frozen lanes — scaffold parity
+(tcrit's #1 critical blocker) is achievable, not merely asserted.
+
+**L-20260529-27** — refers_to: H6, H7 — polarity: supports — source: measured
+*reports/20260529_split-compare_unimol.json (tyms)*. Frozen Uni-Mol
+embedding (512-d, CPU) + XGBoost on TYMS: random AUC 0.781, **scaffold
+AUC 0.731 (fold_std 0.035)**. Versus ECFP4 scaffold 0.800 → **gap
+−0.069: frozen Uni-Mol loses to ECFP4 on TYMS too.** H6 (frozen <
+ECFP4) now reproduces on a *non-kinase, mid-regime enzyme*, not just
+BRAF — the frozen-embedding deficit is general, not kinase-specific.
+Crucially this means tcrit's Axis-4 contingency ("if frozen wins on
+the enzyme, H7 has no loss to recover on TYMS") did NOT trigger: there
+is a real −0.069 gap to close, so TYMS stays a valid H7 testbed. The
+H7 test is now crisply framed: does finetuning lift Uni-Mol from 0.731
+to ≥0.80 (matching ECFP4) on identical scaffold folds?
+
+**L-20260529-24** — refers_to: H1, H6 — polarity: supports (weak) / refutes — source: measured
+*reports/20260529_braf_unimol_splits.json* (GH #5). BRAF Uni-Mol:
+stratified AUC 0.832, scaffold AUC 0.806, gap 0.026 (ECFP4 gap was
+0.019). H1 weakly-validated on dense embeddings too — gap stays < 0.05,
+and is NOT larger than ECFP4 as speculated. H6 reinforced: Uni-Mol
+loses to ECFP4 on both splits (-0.096 stratified, -0.103 scaffold).
+Two scaffold runs (A6000 0.804, 3090 0.806) agree to 0.002.
+
+**L-20260529-25** — refers_to: README claim, H1 baseline — polarity: supports — source: measured
+*reports/20260529_coadd_unimol_repro.json* (GH #2). CO-ADD Uni-Mol
+reproducibility on fresh RTX 3090: OOF AUC 0.894 (baseline 0.895),
+AUPRC 0.259 (0.256), SAE R²med 0.826 (0.824), dead 0.000. All within
+regression tolerance (±0.01 AUC, ±0.05 R²). The EXPECTED_OUTPUTS
+headline numbers are reproducible and GPU-class-independent.

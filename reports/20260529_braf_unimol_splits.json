@@ -1,0 +1,37 @@
+{
+  "csv": "data/processed/braf.csv",
+  "features": "unimol",
+  "n": 5751,
+  "active_pct": 0.4086245870283429,
+  "splits": {
+    "stratified": {
+      "AUC": 0.8322467109173147,
+      "AUPRC": 0.7571765237017968,
+      "MCC@0.5": 0.5055396489246252
+    },
+    "scaffold": {
+      "AUC": 0.8061337403892472,
+      "AUPRC": 0.7294311424435671,
+      "MCC@0.5": 0.4664105558840833
+    }
+  },
+  "sae": {
+    "latent_dim": 4096,
+    "dead_ratio": 0.0,
+    "r2_median": 0.8520806133747101,
+    "r2_above_05": 10,
+    "r2_total": 10,
+    "r2_per_descriptor": {
+      "MolWt": 0.9017632007598877,
+      "MolLogP": 0.6467101573944092,
+      "TPSA": 0.8841297626495361,
+      "NumHAcceptors": 0.8414991497993469,
+      "NumHDonors": 0.8130449056625366,
+      "NumRotatableBonds": 0.8626620769500732,
+      "NumAromaticRings": 0.6175616979598999,
+      "FractionCSP3": 0.8885021805763245,
+      "HeavyAtomCount": 0.9137058258056641,
+      "RingCount": 0.5915452241897583
+    }
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "csv": "data/processed/coadd_pa.csv",
+  "features": "unimol",
+  "n": 24120,
+  "active_pct": 0.028565505804311775,
+  "splits": {
+    "stratified": {
+      "AUC": 0.8939865679787714,
+      "AUPRC": 0.25904801176257225,
+      "MCC@0.5": 0.2668571498493243
+    }
+  },
+  "sae": {
+    "latent_dim": 4096,
+    "dead_ratio": 0.0,
+    "r2_median": 0.8256253004074097,
+    "r2_above_05": 10,
+    "r2_total": 10,
+    "r2_per_descriptor": {
+      "MolWt": 0.9066354036331177,
+      "MolLogP": 0.7863422632217407,
+      "TPSA": 0.8310030698776245,
+      "NumHAcceptors": 0.7983700037002563,
+      "NumHDonors": 0.6932958960533142,
+      "NumRotatableBonds": 0.7035459876060486,
+      "NumAromaticRings": 0.8967082500457764,
+      "FractionCSP3": 0.9367691874504089,
+      "HeavyAtomCount": 0.9223780632019043,
+      "RingCount": 0.8202475309371948
+    }
+  }
+}

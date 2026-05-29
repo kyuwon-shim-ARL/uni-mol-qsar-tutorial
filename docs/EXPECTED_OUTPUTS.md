@@ -347,19 +347,39 @@ those rows are truly inactive — see
 `scripts/download_chembl_target.py` per_molecule_with_null_inactives
 docstring for the caveat.
 
-### BRAF Uni-Mol comparison (2026-05-29, RTX A6000)
+### CO-ADD Uni-Mol reproducibility (2026-05-29, RTX 3090 — GH #2)
+
+The EXPECTED_OUTPUTS Stage-6 A40 baseline (top of this doc) reproduced
+on a fresh GPU 3 days later, different GPU class:
+
+| Metric | A40 baseline (2026-05-26) | RTX 3090 reproduction | within tolerance? |
+|---|---|---|---|
+| OOF AUC (stratified, 5-fold) | 0.895 | **0.894** | ✓ (±0.01) |
+| AUPRC | 0.256 | **0.259** | ✓ |
+| SAE R²_median (latent=4096, ep=100) | 0.824 | **0.826** | ✓ (±0.05) |
+| dead_ratio | 0.000 | 0.000 | ✓ |
+
+**Reproducibility CONFIRMED.** The pipeline is GPU-class-independent
+and stable across runs. This closes the regression-test concern: the
+headline numbers are real, not run-specific artifacts.
+
+### BRAF Uni-Mol comparison (2026-05-29, RTX A6000 + RTX 3090)
 
 | Metric | ECFP4 (2048 bit) | Uni-Mol (512-d) | gap |
 |---|---|---|---|
-| Scaffold OOF AUC | 0.909 | **0.804** | **-0.105 (Uni-Mol loses)** |
-| Scaffold OOF AUPRC | 0.878 | 0.718 | -0.160 |
+| Stratified OOF AUC | 0.928 | **0.832** | **-0.096 (Uni-Mol loses)** |
+| Scaffold OOF AUC | 0.909 | **0.806** | **-0.103 (Uni-Mol loses)** |
+| Scaffold OOF AUPRC | 0.878 | 0.729 | -0.149 |
 | SAE R²_median | 0.872 (latent=2048, ep=30) | 0.852 (latent=4096, ep=100) | -0.020 |
 | dead_ratio | 0.000 | 0.000 | 0 |
 
-**Key finding**: Uni-Mol *underperforms* ECFP4 on BRAF scaffold split
-(see PREMISES H6). The README claim "Uni-Mol on full N beats ECFP4
-here" was measured on CO-ADD PA (phenotypic, diverse). On a
-target-specific kinase dataset the relationship reverses.
+**Key finding**: Uni-Mol *underperforms* ECFP4 on BRAF — on **both**
+stratified (-0.096) and scaffold (-0.103) splits (see PREMISES H6).
+The README claim "Uni-Mol on full N beats ECFP4 here" was measured on
+CO-ADD PA (phenotypic, diverse). On a target-specific kinase dataset
+the relationship reverses, consistently across split protocols.
+The two BRAF Uni-Mol scaffold runs (0.804 RTX A6000, 0.806 RTX 3090)
+agree to 0.002 — another reproducibility datapoint.
 
 Per-descriptor SAE R² (Uni-Mol → linear-recover RDKit descriptors):
 
