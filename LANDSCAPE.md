@@ -298,3 +298,14 @@ reproducibility on fresh RTX 3090: OOF AUC 0.894 (baseline 0.895),
 AUPRC 0.259 (0.256), SAE R²med 0.826 (0.824), dead 0.000. All within
 regression tolerance (±0.01 AUC, ±0.05 R²). The EXPECTED_OUTPUTS
 headline numbers are reproducible and GPU-class-independent.
+
+**L-20260529-34** — refers_to: H7, H6 — polarity: supports (partial) — source: measured
+*reports/20260529_h7_braf_finetune.json* (RTX A6000, $0.76). BRAF Uni-Mol
+finetuned (MolTrain, scaffold 5-fold, epochs=20, 2 seeds): mean AUC
+0.887 ± 0.006. Recovers 79% of the frozen(0.806)→ECFP4(0.909) gap but
+does not reverse it — ECFP4 still +0.022 ahead (~4× seed-spread). H7
+PARTIALLY VALIDATED: foundation→finetune helps materially but ECFP4 +
+tree remains marginally best on this target. from-scratch control
+infra-blocked (unimol_tools always loads pretrained). Confirms H6's core
+point survives finetuning: the 3D-foundation-model advantage is not
+automatic on target-specific kinase QSAR.

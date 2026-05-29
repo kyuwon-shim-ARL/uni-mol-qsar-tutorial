@@ -1,0 +1,33 @@
+# 2026-05-29 GPU session — H7 (Uni-Mol finetuning)
+purpose: BRAF Uni-Mol finetuning (MolTrain) — does finetuning close the frozen→ECFP4 gap?
+gpu: NVIDIA RTX A6000 (48GB)
+datacenter: EU-SE-1
+cloud_type: SECURE
+pod_id: 252h1pgxzva4ku
+created_at: "2026-05-29T04:04:40Z"
+deleted_at: "2026-05-29T05:40:00Z"
+cost_actual_usd: 0.76
+wall_hr: 1.54
+
+acquisition_note: |
+  Acquired via ScheduleWakeup auto-retry after a ~20-min platform-wide
+  RunPod stockout (all DC × all GPU "no instances currently available",
+  110+ attempts the prior turn). First retry after the wakeup succeeded.
+  CUDA preflight (torch.zeros().cuda()) passed before any work — the
+  A40-EU-SE-1 wedge lesson from the prior session applied.
+
+results:
+  h7_braf_finetune:
+    finetuned_unimol_scaffold_auc: 0.887   # ± 0.006 (seeds 42=0.892, 1=0.881)
+    epochs: 20
+    seeds: 2
+    reference_frozen_unimol: 0.806
+    reference_ecfp4: 0.909
+    verdict: "PARTIALLY VALIDATED — recovers 79% of frozen→ECFP4 gap, does not reverse"
+
+infra_findings:
+  - "MolTrain writes metric.result (joblib dict with auc/auprc) + cv.data (joblib ndarray of OOF preds). Read metric.result, not cv.data (non-pickle)."
+  - "from-scratch control infra-blocked: MolTrain(pretrained_model_path='') errors needing dict.txt; always loads pretrained backbone. H7 can't fully separate pretraining-help from NN-help."
+  - "MolTrain finetune ~2457s/seed (5 folds, 20 epochs w/ early_stopping=5) on A6000 — finetuning is the expensive lane; budget accordingly."
+
+smoke_check: "2-epoch 1-seed smoke gave AUC 0.834 in 457s — used to validate runner before the full 2-seed run."

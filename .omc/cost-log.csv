@@ -4,3 +4,5 @@ ts_utc,skill,task,resource,cost_usd,wall_min,notes
 2026-05-29T00:33:00Z,cc,N1-BRAF-unimol-minimal,RunPod A6000 EU-SE-1,0.19,23,success — pod 8nwcewfjld63l4 deleted; BRAF unimol AUC=0.804 R2=0.852
 2026-05-29T01:50:00Z,cc,GH#2#5-gpu-A40-wedged,RunPod A40 EU-SE-1 x2,0.06,2,CUDA device busy/unavailable on 2 A40 hosts; deleted
 2026-05-29T02:17:00Z,cc,GH#2#5-gpu-success,RunPod RTX3090 EU-CZ-1,0.20,26,BRAF splits + CO-ADD repro; pod i3wekoy6es1hii deleted
+2026-05-29T03:43:25Z,cc,H7-gpu-stockout,RunPod all-DC,0.00,0,platform-wide 'no instances available' x110+ attempts; H7 runner ready; ScheduleWakeup retry
+2026-05-29T05:38:10Z,cc,H7-braf-finetune,RunPod A6000 EU-SE-1,0.76,92,finetuned AUC 0.887±0.006; pod 252h1pgxzva4ku deleted

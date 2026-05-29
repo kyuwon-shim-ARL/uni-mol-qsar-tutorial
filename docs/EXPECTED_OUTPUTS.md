@@ -381,6 +381,28 @@ the relationship reverses, consistently across split protocols.
 The two BRAF Uni-Mol scaffold runs (0.804 RTX A6000, 0.806 RTX 3090)
 agree to 0.002 — another reproducibility datapoint.
 
+### BRAF finetuned Uni-Mol (H7, 2026-05-29, RTX A6000)
+
+Does **finetuning** (backprop through the transformer, not frozen
+`get_repr`) close the frozen→ECFP4 gap? MolTrain scaffold 5-fold,
+epochs=20, 2 seeds:
+
+| Lane (BRAF, scaffold OOF AUC) | AUC |
+|---|---|
+| ECFP4 + XGB | **0.909** |
+| finetuned Uni-Mol (epochs=20) | 0.887 ± 0.006 |
+| frozen Uni-Mol + XGB | 0.806 |
+
+Finetuning recovers **79%** of the frozen→ECFP4 gap (0.806→0.887,
++0.081 of 0.103) but does **not** reverse it — ECFP4 stays +0.022 ahead
+(~4× the 0.006 seed spread). **Conclusion: the 3D foundation-model
+advantage is not automatic on target-specific kinase QSAR.** Frozen
+embeddings lose; finetuning mostly catches up at real GPU cost ($0.76
+for this 2-seed run); the cheap ECFP4 baseline remains marginally best.
+From-scratch (random-init) control is infra-blocked in `unimol_tools`
+(always loads pretrained), so "pretraining helps" vs "NN helps" can't be
+fully separated here — documented limitation. See PREMISES H7.
+
 Per-descriptor SAE R² (Uni-Mol → linear-recover RDKit descriptors):
 
 | Descriptor | R² |

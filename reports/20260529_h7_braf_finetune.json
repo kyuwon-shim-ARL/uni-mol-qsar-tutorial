@@ -1,0 +1,28 @@
+{
+  "csv": "data/processed/braf.csv",
+  "tag": "braf",
+  "epochs": 20,
+  "lanes": {
+    "finetuned": {
+      "seeds": [
+        42,
+        1
+      ],
+      "aucs": [
+        0.8924,
+        0.8811
+      ],
+      "auprcs": [
+        0.8438,
+        0.8129
+      ],
+      "mean_auc": 0.8867,
+      "std_auc": 0.0057
+    }
+  },
+  "from_scratch_control": "infra-blocked: unimol_tools MolTrain always loads pretrained backbone",
+  "reference_lanes": {
+    "frozen_unimol_xgb_scaffold": 0.806,
+    "ecfp4_xgb_scaffold": 0.909
+  }
+}

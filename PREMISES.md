@@ -247,7 +247,43 @@ just `get_repr`) should adapt the representation to the target and
 close or reverse that −0.105 gap. This is the foundation→finetuning
 paradigm the tutorial currently omits (it uses Uni-Mol frozen only).
 
-**Status**: PLANNED (no measurement yet)
+**Status**: PARTIALLY VALIDATED — finetuning recovers most of the gap but
+does not reverse it (measured 2026-05-29, RTX A6000).
+
+**Measurement (BRAF, scaffold 5-fold, MolTrain finetune epochs=20, 2 seeds)**:
+
+| Lane (BRAF, scaffold OOF AUC) | AUC |
+|-------------------------------|-----|
+| ECFP4 + XGB | 0.909 |
+| **finetuned Uni-Mol** (epochs=20) | **0.887 ± 0.006** (seeds 0.892, 0.881) |
+| frozen Uni-Mol + XGB | 0.806 |
+
+**Interpretation**: finetuning closes **79% of the frozen→ECFP4 gap**
+(0.806 → 0.887 = +0.081 of the 0.103 deficit). The foundation→finetune
+paradigm clearly helps — the representation adapts to the target. **But
+ECFP4 still wins by 0.022**, ~4× the finetuned seed-spread (0.006), so the
+gap is real if small. H7's claim ("recovers OR reverses the gap") is
+**recovered, not reversed**: on BRAF a 2D fingerprint + tree model remains
+marginally the best, even against a finetuned 3D foundation model.
+Practical takeaway for the tutorial: the foundation-model advantage is NOT
+automatic on target-specific data — frozen embeddings lose, finetuning
+mostly catches up, and the simple ECFP4 baseline is a genuinely strong,
+cheap competitor.
+
+**Limitation**: the from-scratch (random-init) control is **infra-blocked**
+— `unimol_tools.MolTrain` always loads the pretrained backbone
+(`pretrained_model_path=""` errors needing dict.txt). So this result shows
+"finetuning ≫ frozen" but cannot fully separate "pretraining helps" from
+"end-to-end NN training helps". A proper from-scratch arm needs deeper
+unimol_tools surgery (left as future work).
+**Owner**: `scripts/.../h7_finetune.py` (MolTrain wrapper), GH-flavored H7.
+**dependent_workflows**: any "use the 3D foundation model for this target"
+decision — must weigh the finetuning GPU cost ($0.76 for this 2-seed run)
+against ECFP4's near-equal, near-free result.
+
+<!-- H7 original design notes (tcrit 4-axis) retained below for reference -->
+
+### H7-DESIGN (original plan, retained)
 
 **Test design** (tcrit-hardened, 4 axes — see derivation below):
 
