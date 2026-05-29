@@ -1,0 +1,417 @@
+{
+  "csv": "data/processed/braf.csv",
+  "features": "ecfp4",
+  "sae_latent": 2048,
+  "sae_epochs": 30,
+  "n_active_latents": 2048,
+  "n_monosemantic": 0,
+  "monosemantic_fraction": 0.0,
+  "criteria": {
+    "sel_min": 0.5,
+    "margin_min": 0.2,
+    "fire_threshold": 0.01
+  },
+  "monosemantic_by_descriptor": {},
+  "latents": [
+    {
+      "latent": 1871,
+      "best_descriptor": "NumHDonors",
+      "selectivity": 0.379,
+      "runner_up": 0.377,
+      "margin": 0.002,
+      "monosemantic": false
+    },
+    {
+      "latent": 952,
+      "best_descriptor": "NumHDonors",
+      "selectivity": 0.35,
+      "runner_up": 0.339,
+      "margin": 0.01,
+      "monosemantic": false
+    },
+    {
+      "latent": 352,
+      "best_descriptor": "NumRotatableBonds",
+      "selectivity": 0.309,
+      "runner_up": 0.284,
+      "margin": 0.026,
+      "monosemantic": false
+    },
+    {
+      "latent": 1995,
+      "best_descriptor": "TPSA",
+      "selectivity": 0.293,
+      "runner_up": 0.252,
+      "margin": 0.04,
+      "monosemantic": false
+    },
+    {
+      "latent": 1841,
+      "best_descriptor": "NumHDonors",
+      "selectivity": 0.281,
+      "runner_up": 0.273,
+      "margin": 0.009,
+      "monosemantic": false
+    },
+    {
+      "latent": 1903,
+      "best_descriptor": "NumHDonors",
+      "selectivity": 0.278,
+      "runner_up": 0.273,
+      "margin": 0.004,
+      "monosemantic": false
+    },
+    {
+      "latent": 1993,
+      "best_descriptor": "NumHDonors",
+      "selectivity": 0.263,
+      "runner_up": 0.244,
+      "margin": 0.019,
+      "monosemantic": false
+    },
+    {
+      "latent": 1076,
+      "best_descriptor": "TPSA",
+      "selectivity": 0.234,
+      "runner_up": 0.229,
+      "margin": 0.005,
+      "monosemantic": false
+    },
+    {
+      "latent": 1405,
+      "best_descriptor": "NumHDonors",
+      "selectivity": 0.231,
+      "runner_up": 0.217,
+      "margin": 0.013,
+      "monosemantic": false
+    },
+    {
+      "latent": 937,
+      "best_descriptor": "NumHDonors",
+      "selectivity": 0.226,
+      "runner_up": 0.211,
+      "margin": 0.015,
+      "monosemantic": false
+    },
+    {
+      "latent": 1986,
+      "best_descriptor": "NumRotatableBonds",
+      "selectivity": 0.214,
+      "runner_up": 0.213,
+      "margin": 0.001,
+      "monosemantic": false
+    },
+    {
+      "latent": 69,
+      "best_descriptor": "NumHDonors",
+      "selectivity": 0.211,
+      "runner_up": 0.17,
+      "margin": 0.041,
+      "monosemantic": false
+    },
+    {
+      "latent": 703,
+      "best_descriptor": "TPSA",
+      "selectivity": 0.209,
+      "runner_up": 0.207,
+      "margin": 0.002,
+      "monosemantic": false
+    },
+    {
+      "latent": 1633,
+      "best_descriptor": "NumHDonors",
+      "selectivity": 0.209,
+      "runner_up": 0.192,
+      "margin": 0.017,
+      "monosemantic": false
+    },
+    {
+      "latent": 1437,
+      "best_descriptor": "NumRotatableBonds",
+      "selectivity": 0.2,
+      "runner_up": 0.198,
+      "margin": 0.002,
+      "monosemantic": false
+    },
+    {
+      "latent": 315,
+      "best_descriptor": "NumHDonors",
+      "selectivity": 0.198,
+      "runner_up": 0.162,
+      "margin": 0.035,
+      "monosemantic": false
+    },
+    {
+      "latent": 1728,
+      "best_descriptor": "TPSA",
+      "selectivity": 0.198,
+      "runner_up": 0.193,
+      "margin": 0.006,
+      "monosemantic": false
+    },
+    {
+      "latent": 593,
+      "best_descriptor": "TPSA",
+      "selectivity": 0.194,
+      "runner_up": 0.19,
+      "margin": 0.005,
+      "monosemantic": false
+    },
+    {
+      "latent": 385,
+      "best_descriptor": "TPSA",
+      "selectivity": 0.193,
+      "runner_up": 0.19,
+      "margin": 0.003,
+      "monosemantic": false
+    },
+    {
+      "latent": 773,
+      "best_descriptor": "NumRotatableBonds",
+      "selectivity": 0.186,
+      "runner_up": 0.179,
+      "margin": 0.007,
+      "monosemantic": false
+    },
+    {
+      "latent": 670,
+      "best_descriptor": "TPSA",
+      "selectivity": 0.181,
+      "runner_up": 0.176,
+      "margin": 0.004,
+      "monosemantic": false
+    },
+    {
+      "latent": 489,
+      "best_descriptor": "NumHDonors",
+      "selectivity": 0.178,
+      "runner_up": 0.17,
+      "margin": 0.009,
+      "monosemantic": false
+    },
+    {
+      "latent": 1861,
+      "best_descriptor": "NumHDonors",
+      "selectivity": 0.178,
+      "runner_up": 0.145,
+      "margin": 0.032,
+      "monosemantic": false
+    },
+    {
+      "latent": 1851,
+      "best_descriptor": "NumHDonors",
+      "selectivity": 0.174,
+      "runner_up": 0.168,
+      "margin": 0.005,
+      "monosemantic": false
+    },
+    {
+      "latent": 1865,
+      "best_descriptor": "NumHDonors",
+      "selectivity": 0.174,
+      "runner_up": 0.146,
+      "margin": 0.029,
+      "monosemantic": false
+    },
+    {
+      "latent": 427,
+      "best_descriptor": "NumHDonors",
+      "selectivity": 0.172,
+      "runner_up": 0.168,
+      "margin": 0.004,
+      "monosemantic": false
+    },
+    {
+      "latent": 721,
+      "best_descriptor": "NumHDonors",
+      "selectivity": 0.17,
+      "runner_up": 0.161,
+      "margin": 0.009,
+      "monosemantic": false
+    },
+    {
+      "latent": 1845,
+      "best_descriptor": "NumRotatableBonds",
+      "selectivity": 0.166,
+      "runner_up": 0.165,
+      "margin": 0.001,
+      "monosemantic": false
+    },
+    {
+      "latent": 753,
+      "best_descriptor": "NumHDonors",
+      "selectivity": 0.163,
+      "runner_up": 0.133,
+      "margin": 0.03,
+      "monosemantic": false
+    },
+    {
+      "latent": 1236,
+      "best_descriptor": "NumHDonors",
+      "selectivity": 0.161,
+      "runner_up": 0.145,
+      "margin": 0.015,
+      "monosemantic": false
+    },
+    {
+      "latent": 259,
+      "best_descriptor": "TPSA",
+      "selectivity": 0.16,
+      "runner_up": 0.144,
+      "margin": 0.017,
+      "monosemantic": false
+    },
+    {
+      "latent": 151,
+      "best_descriptor": "NumHDonors",
+      "selectivity": 0.157,
+      "runner_up": 0.103,
+      "margin": 0.054,
+      "monosemantic": false
+    },
+    {
+      "latent": 1502,
+      "best_descriptor": "TPSA",
+      "selectivity": 0.154,
+      "runner_up": 0.149,
+      "margin": 0.005,
+      "monosemantic": false
+    },
+    {
+      "latent": 200,
+      "best_descriptor": "NumHDonors",
+      "selectivity": 0.151,
+      "runner_up": 0.134,
+      "margin": 0.017,
+      "monosemantic": false
+    },
+    {
+      "latent": 189,
+      "best_descriptor": "NumRotatableBonds",
+      "selectivity": 0.15,
+      "runner_up": 0.138,
+      "margin": 0.012,
+      "monosemantic": false
+    },
+    {
+      "latent": 150,
+      "best_descriptor": "NumHDonors",
+      "selectivity": 0.149,
+      "runner_up": 0.148,
+      "margin": 0.001,
+      "monosemantic": false
+    },
+    {
+      "latent": 1141,
+      "best_descriptor": "NumRotatableBonds",
+      "selectivity": 0.146,
+      "runner_up": 0.134,
+      "margin": 0.013,
+      "monosemantic": false
+    },
+    {
+      "latent": 1991,
+      "best_descriptor": "NumHDonors",
+      "selectivity": 0.146,
+      "runner_up": 0.138,
+      "margin": 0.008,
+      "monosemantic": false
+    },
+    {
+      "latent": 763,
+      "best_descriptor": "NumHDonors",
+      "selectivity": 0.142,
+      "runner_up": 0.095,
+      "margin": 0.047,
+      "monosemantic": false
+    },
+    {
+      "latent": 1022,
+      "best_descriptor": "NumHAcceptors",
+      "selectivity": 0.136,
+      "runner_up": 0.125,
+      "margin": 0.011,
+      "monosemantic": false
+    },
+    {
+      "latent": 1627,
+      "best_descriptor": "NumRotatableBonds",
+      "selectivity": 0.134,
+      "runner_up": 0.12,
+      "margin": 0.014,
+      "monosemantic": false
+    },
+    {
+      "latent": 1755,
+      "best_descriptor": "NumRotatableBonds",
+      "selectivity": 0.134,
+      "runner_up": 0.132,
+      "margin": 0.002,
+      "monosemantic": false
+    },
+    {
+      "latent": 902,
+      "best_descriptor": "HeavyAtomCount",
+      "selectivity": 0.133,
+      "runner_up": 0.13,
+      "margin": 0.003,
+      "monosemantic": false
+    },
+    {
+      "latent": 1775,
+      "best_descriptor": "NumHDonors",
+      "selectivity": 0.132,
+      "runner_up": 0.117,
+      "margin": 0.015,
+      "monosemantic": false
+    },
+    {
+      "latent": 1782,
+      "best_descriptor": "NumHDonors",
+      "selectivity": 0.132,
+      "runner_up": 0.113,
+      "margin": 0.019,
+      "monosemantic": false
+    },
+    {
+      "latent": 1124,
+      "best_descriptor": "NumHDonors",
+      "selectivity": 0.13,
+      "runner_up": 0.108,
+      "margin": 0.022,
+      "monosemantic": false
+    },
+    {
+      "latent": 685,
+      "best_descriptor": "NumRotatableBonds",
+      "selectivity": 0.129,
+      "runner_up": 0.105,
+      "margin": 0.025,
+      "monosemantic": false
+    },
+    {
+      "latent": 951,
+      "best_descriptor": "NumRotatableBonds",
+      "selectivity": 0.127,
+      "runner_up": 0.126,
+      "margin": 0.002,
+      "monosemantic": false
+    },
+    {
+      "latent": 258,
+      "best_descriptor": "NumHDonors",
+      "selectivity": 0.126,
+      "runner_up": 0.102,
+      "margin": 0.024,
+      "monosemantic": false
+    },
+    {
+      "latent": 1053,
+      "best_descriptor": "NumRotatableBonds",
+      "selectivity": 0.124,
+      "runner_up": 0.115,
+      "margin": 0.009,
+      "monosemantic": false
+    }
+  ]
+}

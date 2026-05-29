@@ -62,15 +62,24 @@ ring-count descriptors moderately (NumAromaticRings 0.619, RingCount
 descriptor structure as ECFP4 bits — neither feature space loses the
 "narrow vs diverse" signal that H2 predicted.
 
-**Open question** (separate from H2): the SAE is *interpretable* for
-descriptor recovery but the *number of monosemantic features* (vs
-polysemantic) was NOT measured here. The Bharadwaj 2024 paper reports
-that as the load-bearing SAE quality metric. R² of RDKit descriptors
-is a coarser proxy. Future ticket: measure feature monosemanticity.
+**Open question RESOLVED (2026-05-29)**: monosemanticity measured.
+`scripts/sae_monosemanticity.py` on BRAF ECFP4 SAE (2048 latents): of
+**2048 active latents, 0 are monosemantic** (criterion: one descriptor
+explains R²≥0.5 AND beats runner-up by ≥0.2). Top latent selectivity is
+only 0.379 (NumHDonors). **This sharpens the H2 verdict**: descriptor
+recovery R² (0.872) is a *population* metric — the SAE basis collectively
+spans descriptor space — but **no individual latent is a clean
+descriptor detector** (per-latent polysemantic). Descriptor-R² therefore
+*overstates* per-feature interpretability, exactly the Bharadwaj-2024
+distinction. So H2's "SAE is interpretable regardless of diversity" is
+true only at the population (R²) level; at the monosemantic-feature
+level the ECFP4 SAE is poorly interpretable. **Caveat**: ECFP4 SAE only;
+Uni-Mol SAE monosemanticity (Bharadwaj's actual setting) needs GPU and
+is the remaining open sub-question.
 **Reference**: Bharadwaj et al. 2024 (arXiv:2512.08077) — SMI-TED SAE on
 diverse PubChem reports high variance explained, but no diversity
 ablation.
-**Owner**: `sae.descriptor_recovery`, T8 in `EXPECTED_OUTPUTS.md`.
+**Owner**: `sae.descriptor_recovery` + `scripts/sae_monosemanticity.py`, T8.
 
 ### H3 — External BindingDB hold-out exposes covariate shift on kinase
 
@@ -197,26 +206,36 @@ within their era. There is a chemical-space discontinuity around the
 2014/2015 boundary, likely driven by the introduction of new BRAF
 inhibitor scaffolds in the post-vemurafenib era.
 
-**Status**: VALIDATING (BRAF only, ECFP4)
-**Measurement (2026-05-29, time-sweep ecfp4)**:
-| Cutoff | n_train | n_test | AUC |
-|--------|---------|--------|-----|
-| 2010 | 998 | 4753 | 0.548 |
-| 2012 | 1572 | 4179 | 0.569 |
-| 2014 | 2783 | 2968 | 0.603 |
-| 2016 | 3647 | 2104 | 0.859 |
-| 2018 | 5092 | 659 | 0.730 |
-| 2020 | 5448 | 303 | 0.875 |
+**Status**: VALIDATING — but **target-dependent**, not a universal kinase
+property (cross-kinase tested 2026-05-29).
+**Measurement (time-sweep ecfp4, AUC by train≤cutoff / test>cutoff)**:
 
-**Interpretation**: AUC jumps from 0.60 (cutoff 2014) to 0.86 (cutoff
-2016). The 2018 dip is likely test-set size noise (n=659). The cleanest
-interpretation: pre-2014 training set has missing scaffolds that appear
-post-2014 — the model literally cannot have seen the chemistry it is
-being asked to predict. Implication: **time-split is the most honest
-single-number metric** for kinase QSAR. OOF AUC silently averages over
-this temporal break.
+| Cutoff | BRAF | EGFR | JAK2 |
+|--------|------|------|------|
+| 2010 | 0.548 | 0.557 | 0.528 |
+| 2012 | 0.569 | 0.554 | 0.621 |
+| 2014 | 0.603 | 0.539 | 0.637 |
+| 2016 | **0.859** | 0.480 | 0.660 |
+| 2018 | 0.730 | 0.576 | 0.748 |
+| 2020 | 0.875 | 0.561 | 0.657 |
+
+**Interpretation**: the 2014→2016 temporal break is **BRAF-specific**.
+- **BRAF**: sharp jump 0.60→0.86 (post-vemurafenib scaffold influx).
+- **JAK2**: gentle monotone rise 0.53→0.75 — mild, gradual drift, no cliff.
+- **EGFR**: flat ~0.5 (even dips to 0.48 at 2016) — time-split is
+  near-**random**. EGFR's pre/post-cutoff chemistry is either so diverse
+  that no era predicts another, or the deposit timeline doesn't align with
+  scaffold introduction. Either way, "train on past → predict future"
+  fails entirely for EGFR at the ECFP4 level.
+
+The honest generalization: **time-split is the most honest single-number
+metric** (OOF AUC hides temporal structure), but the *shape* of the
+temporal dependence is per-target — sharp cliff (BRAF), gentle drift
+(JAK2), or no signal (EGFR). H5's original BRAF-specific "2014/2015
+cliff" claim holds for BRAF only.
 **Owner**: `data.time_split_indices`, T5; `scripts/time_split_sweep.py`.
-**dependent_workflows**: any "predict future BRAF inhibitor" claim.
+**dependent_workflows**: any "predict future inhibitor" claim — must run
+the per-target time-sweep, not assume a universal break.
 
 ### H7 — Finetuning Uni-Mol recovers the gap that frozen embeddings lost
 

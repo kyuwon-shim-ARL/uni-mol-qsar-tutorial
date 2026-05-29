@@ -146,6 +146,33 @@ bias mitigated" regime but treats unmeasured-pchembl rows as
 definitively inactive — a strong assumption. Downstream pipeline runs
 on the boosted set are not yet performed.
 
+**L-20260529-31** — refers_to: P1 — polarity: qualifies — source: measured
+*reports/20260529_braf_boosted_ecfp4.json* (boosted downstream — resolves
+L-17's "not yet performed"). boosted-BRAF (8671 mol, 27.1% active) scaffold
+OOF AUC **0.935** vs default-BRAF 0.909, AUPRC 0.85 vs 0.878, SAE R² 0.909.
+Counterintuitively the metric IMPROVES — but this is the **easy-negative
+effect**: adding 2920 null-pchembl molecules as inactives dilutes with
+easy-to-classify negatives, inflating AUC. It does NOT mean better learning.
+Lesson: publication-bias "mitigation" by null-as-inactive makes headline
+AUC look better while the task becomes easier — report active% alongside
+AUC always.
+
+**L-20260529-32** — refers_to: H5 — polarity: qualifies — source: measured
+*reports/20260529_{egfr,jak2}_time_sweep.json*. Cross-kinase time-split:
+BRAF sharp 2014→2016 cliff (0.60→0.86), JAK2 gentle drift (0.53→0.75),
+EGFR flat/near-random (~0.5, dips to 0.48). The temporal break is
+BRAF-specific, not a universal kinase property. H5 generalizes only as
+"run the per-target time-sweep" — the shape (cliff/drift/none) varies.
+
+**L-20260529-33** — refers_to: H2 — polarity: qualifies — source: measured
+*reports/20260529_sae_monosem_braf_ecfp4.json*. BRAF ECFP4 SAE: 2048
+active latents, **0 monosemantic** (top selectivity 0.379). Descriptor
+recovery R² (0.872, population metric) overstates per-feature
+interpretability — no individual latent cleanly maps to one descriptor.
+Resolves H2's open question: descriptor-R² ≠ monosemanticity. Uni-Mol
+SAE monosemanticity (Bharadwaj's dense-embedding setting) remains the
+open sub-question (needs GPU).
+
 **L-20260529-18** — refers_to: H4 — polarity: supports (granularity-dependent) — source: measured
 *reports/20260529_braf_mmp_mined.json*. Data-mined MMPs on BRAF with
 delta-atom-count buckets (Tanimoto ≥ 0.85 + same scaffold): 8
