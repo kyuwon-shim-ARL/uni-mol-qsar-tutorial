@@ -347,6 +347,44 @@ those rows are truly inactive — see
 `scripts/download_chembl_target.py` per_molecule_with_null_inactives
 docstring for the caveat.
 
+### BRAF Uni-Mol comparison (2026-05-29, RTX A6000)
+
+| Metric | ECFP4 (2048 bit) | Uni-Mol (512-d) | gap |
+|---|---|---|---|
+| Scaffold OOF AUC | 0.909 | **0.804** | **-0.105 (Uni-Mol loses)** |
+| Scaffold OOF AUPRC | 0.878 | 0.718 | -0.160 |
+| SAE R²_median | 0.872 (latent=2048, ep=30) | 0.852 (latent=4096, ep=100) | -0.020 |
+| dead_ratio | 0.000 | 0.000 | 0 |
+
+**Key finding**: Uni-Mol *underperforms* ECFP4 on BRAF scaffold split
+(see PREMISES H6). The README claim "Uni-Mol on full N beats ECFP4
+here" was measured on CO-ADD PA (phenotypic, diverse). On a
+target-specific kinase dataset the relationship reverses.
+
+Per-descriptor SAE R² (Uni-Mol → linear-recover RDKit descriptors):
+
+| Descriptor | R² |
+|---|---|
+| MolWt | 0.901 |
+| HeavyAtomCount | 0.912 |
+| TPSA | 0.882 |
+| FractionCSP3 | 0.887 |
+| NumRotatableBonds | 0.863 |
+| NumHAcceptors | 0.840 |
+| NumHDonors | 0.814 |
+| MolLogP | 0.646 |
+| NumAromaticRings | 0.619 |
+| RingCount | 0.594 |
+
+All 10 descriptors clear R² > 0.5; physicochemical bulk descriptors
+near-perfect, count-of-rings descriptors moderate. The SAE recovers
+descriptor structure regardless of input chemical diversity — H2
+(diversity-dependent R²) is FALSIFIED on both representations.
+
+**GPU cost**: $0.19 actual (RTX A6000 EU-SE-1, ~23 min wall clock,
+$0.49/hr). Within approved $0.25 cap. Pod
+`8nwcewfjld63l4`, deleted immediately after rsync.
+
 ### MMP grid (BRAF, inactive subset × series-local threshold)
 
 | Subset | thr=2 | thr=3 | thr=5 |

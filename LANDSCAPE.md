@@ -162,10 +162,31 @@ delta_+3 → 3.3% larger-compound-active. Consistent with BRAF ATP
 pocket constraints. Suggests an evidence-driven heuristic for hit
 optimization on this target.
 
-**L-PENDING-Uni-Mol** — refers_to: H2 — polarity: pending — source: running
-Uni-Mol SAE descriptor R² on BRAF (sae_latent=4096, epochs=100). Pod
-8nwcewfjld63l4 (RTX A6000, EU-SE-1) running 2026-05-29. CO-ADD Uni-Mol
-reproducibility check deferred to a future GPU session (budget cap).
+**L-20260529-20** — refers_to: H2, H6 — polarity: refutes/qualifies — source: measured
+*reports/20260529_braf_unimol_minimal.json*. RTX A6000 EU-SE-1, $0.19
+actual cost. BRAF Uni-Mol scaffold-fold OOF AUC=0.804, SAE
+(latent=4096, epochs=100) dead_ratio=0, R²_median=0.852, R²>0.5: 10/10.
+Per-descriptor: MolWt 0.901, HeavyAtomCount 0.912, TPSA 0.882,
+FractionCSP3 0.887, NumRotatableBonds 0.863, NumHAcceptors 0.840,
+NumHDonors 0.814, MolLogP 0.646, NumAromaticRings 0.619,
+RingCount 0.594. H2 falsified — Uni-Mol R² is essentially the same as
+ECFP4 R² on the same SAR-narrow data. The "diversity drives SAE R²"
+prediction does not hold for either feature space at these scales.
+
+**L-20260529-21** — refers_to: H6 (new) — polarity: refutes — source: measured
+*Same run*. Uni-Mol scaffold AUC 0.804 < ECFP4 scaffold AUC 0.909
+(gap −0.105). Uni-Mol *underperforms* ECFP4 on BRAF. The implicit
+"3D > 2D fingerprint" framing of the tutorial fails on target-
+specific cancer-kinase data — likely because BRAF SAR is dominated by
+2D pharmacophore patterns that ECFP4 captures directly while Uni-Mol's
+general-chemistry pretraining averages target-specific discrimination
+out. README's CO-ADD-based "Uni-Mol beats ECFP4" claim does not
+generalize to single-target kinase.
+
+**L-PENDING-Uni-Mol-CO-ADD** — refers_to: H1, README claim — polarity: pending — source: deferred
+CO-ADD Uni-Mol reproducibility (the EXPECTED_OUTPUTS 0.895 AUC, 0.824
+SAE R² values). Deferred to a future GPU session — this session's
+budget cap was hit by BRAF Uni-Mol alone.
 
 ## Compaction policy
 

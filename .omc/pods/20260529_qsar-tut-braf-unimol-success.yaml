@@ -1,0 +1,37 @@
+# 2026-05-29 GPU launch — SUCCESS (BRAF Uni-Mol minimal pipeline)
+target: BRAF (CHEMBL5145) Uni-Mol featurize + scaffold OOF + SAE
+gpu: NVIDIA RTX A6000 (48GB)
+datacenter: EU-SE-1
+cloud_type: SECURE
+approved_budget: 0.25
+actual_cost_usd: 0.19
+wall_time_min: 23
+pod_id: 8nwcewfjld63l4
+deleted_at: "2026-05-29T00:33:00Z"
+
+# Why minimal — initial run blocked
+# Full pipeline (examples/run_full_pipeline.py) stuck in MMP scoring loop
+# because Uni-Mol featurizer is re-instantiated per child batch (8 SMIRKS x
+# ~500 inactives x re-load model -> conformer gen on CPU). GPU showed
+# CONSISTENTLY_IDLE (1% util) while 25 min of wall clock elapsed and
+# pipeline only reached [2/6]. Killed and switched to /tmp/braf_unimol_minimal.py
+# which featurizes ONCE then runs XGBoost + SAE. Completed in 6 min.
+
+# Results
+braf_unimol_oof_auc: 0.804
+braf_unimol_oof_auprc: 0.718
+braf_unimol_sae_dead_ratio: 0.000
+braf_unimol_sae_r2_median: 0.852
+braf_unimol_sae_r2_above_05: "10/10"
+
+# Findings (added to PREMISES.md + LANDSCAPE.md)
+findings:
+  - "H2 FALSIFIED on Uni-Mol — SAE R² 0.852 ≈ ECFP4 R² 0.872"
+  - "H6 NEW + FALSIFIED — Uni-Mol scaffold AUC (0.804) < ECFP4 scaffold AUC (0.909)"
+  - "tutorial pipeline efficiency bug — MMP score_fn re-instantiates Uni-Mol per call"
+
+# Pod incidents
+incidents:
+  - "Pod restarted ~17 min in (SSH port 22084 → 22107). nohup runner died, pip installs lost. Re-installed deps."
+  - "Initial libxrender1 install required apt-get update first; cached package list was stale."
+  - "SSH execute_ssh_command returned exit 255 intermittently. Worked via raw scp/ssh from local bash."

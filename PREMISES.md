@@ -34,22 +34,32 @@ the chemical diversity of the input distribution. SAR-narrow target
 datasets (top-10 scaffold share ≥ 0.30) should not be expected to match
 the 0.824 R² achieved on CO-ADD PA (diverse phenotypic).
 
-**Status**: ECFP4-FALSIFIED / Uni-Mol PENDING
-**Measurement (2026-05-28/29, ECFP4 SAE latent=2048 epochs=30)**:
-| Dataset | top10 scaffold% | SAE R²_median |
-|---------|-----------------|---------------|
-| CO-ADD PA | 16.5% | 0.887 |
-| BRAF | 8.5% | 0.872 |
-| EGFR | (n/a measured) | 0.885 |
-| JAK2 | (n/a measured) | 0.918 |
-**Interpretation**: on ECFP4 (sparse bit vectors), SAE R² is *not*
-meaningfully lower for SAR-narrow data. Hypothesis falsified for ECFP4
-features. **However the original claim references foundation-model
-embeddings** (Bharadwaj et al. used SMI-TED, a dense LM). The ECFP4 path
-may be uninformative for the H2 question — sparse bit vectors are
-already over-specified and easy to compress regardless of input
-diversity. **Uni-Mol SAE measurement is the load-bearing test** and
-remains blocked on GPU stockout (2026-05-29).
+**Status**: FALSIFIED on both ECFP4 and Uni-Mol
+**Measurement (2026-05-28/29, ECFP4 SAE latent=2048 epochs=30; Uni-Mol SAE latent=4096 epochs=100 on RTX A6000)**:
+| Dataset | feature | latent | top10 scaffold% | SAE R²_median |
+|---------|---------|--------|-----------------|---------------|
+| CO-ADD PA | ECFP4 | 2048 | 16.5% | 0.887 |
+| BRAF | ECFP4 | 2048 | 8.5% | 0.872 |
+| EGFR | ECFP4 | 2048 | (n/a) | 0.885 |
+| JAK2 | ECFP4 | 2048 | (n/a) | 0.918 |
+| **BRAF** | **Uni-Mol 512-d** | **4096** | 8.5% | **0.852** |
+
+**Interpretation**: Uni-Mol SAE R² on SAR-narrow BRAF (0.852) is
+essentially the same as ECFP4 (0.872) — H2 prediction of R² ≤ 0.60 is
+not borne out. H2 FALSIFIED on the dense-embedding case as well.
+
+Per-descriptor R² shows the SAE captures physicochemical descriptors
+extremely well (MolWt 0.901, HeavyAtomCount 0.912, TPSA 0.882) and
+ring-count descriptors moderately (NumAromaticRings 0.619, RingCount
+0.594). The dense Uni-Mol embedding contains the same linear-decodable
+descriptor structure as ECFP4 bits — neither feature space loses the
+"narrow vs diverse" signal that H2 predicted.
+
+**Open question** (separate from H2): the SAE is *interpretable* for
+descriptor recovery but the *number of monosemantic features* (vs
+polysemantic) was NOT measured here. The Bharadwaj 2024 paper reports
+that as the load-bearing SAE quality metric. R² of RDKit descriptors
+is a coarser proxy. Future ticket: measure feature monosemanticity.
 **Reference**: Bharadwaj et al. 2024 (arXiv:2512.08077) — SMI-TED SAE on
 diverse PubChem reports high variance explained, but no diversity
 ablation.
@@ -123,6 +133,37 @@ context-dependent across scaffolds. (Their finding is about
 data-mined MMPs at MCS-level granularity — consistent with our
 "granularity matters" conclusion.)
 **Owner**: `counterfactual.scan` + `scripts/mmp_mine.py`, T7.
+
+### H6 — Uni-Mol 3D embedding outperforms ECFP4 on cancer-target QSAR
+
+**Claim**: For SAR-dense single-target kinase datasets (BRAF), Uni-Mol
+3D embeddings should give higher OOF AUC than ECFP4 bits — that is the
+implicit framing of the "3D foundation model > 2D fingerprint"
+literature thread the tutorial leans on.
+
+**Status**: FALSIFIED (BRAF only)
+**Measurement (2026-05-29, scaffold split, sae_latent=4096)**:
+- BRAF Uni-Mol scaffold OOF AUC = **0.804** (AUPRC 0.718)
+- BRAF ECFP4 scaffold OOF AUC = **0.909** (AUPRC 0.878)
+- gap = **−0.105** (Uni-Mol *loses*)
+**Interpretation**: ECFP4 outperforms Uni-Mol on BRAF by a large
+margin. Likely reasons: (1) BRAF SAR is dominated by 2D substructural
+patterns (specific aromatic substituents, kinase-hinge H-bond donors)
+that ECFP4 captures directly; (2) Uni-Mol's pretraining corpus
+emphasizes general chemistry and may average out target-specific
+discrimination; (3) Uni-Mol's 3D conformer generation introduces
+features (conformer ensemble) that don't help for ATP-pocket binders
+where 2D pharmacophore is sufficient.
+
+This was the *opposite* of the assumption underlying the tutorial's
+choice of Uni-Mol. The README states "Uni-Mol on full N beats ECFP4
+here" — that was measured on CO-ADD PA (phenotypic, diverse). On a
+target-specific dataset the relationship reverses.
+**Caveat**: only measured on BRAF. CO-ADD reproduction with Uni-Mol
+(to confirm original 0.895 claim) and EGFR/JAK2 Uni-Mol runs would
+strengthen the finding. Both blocked by GPU budget cap (this run hit
+$0.19 of approved $0.25).
+**Owner**: `examples/run_full_pipeline.py`, README "What this teaches".
 
 ### H5 — Kinase QSAR has a 2014/2015 temporal break
 

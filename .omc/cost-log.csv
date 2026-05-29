@@ -1,2 +1,4 @@
 ts_utc,skill,task,resource,cost_usd,wall_min,notes
 2026-05-29T00:25:00Z,dr,A40-stockout,RunPod A40,0.00,0,63 attempts failed; no pod created
+2026-05-29T01:30:00Z,cc,T-V1+T-V4,RunPod-stockout-retry,0.00,0,98 total attempts; no pod created; deferred
+2026-05-29T00:33:00Z,cc,N1-BRAF-unimol-minimal,RunPod A6000 EU-SE-1,0.19,23,success — pod 8nwcewfjld63l4 deleted; BRAF unimol AUC=0.804 R2=0.852
