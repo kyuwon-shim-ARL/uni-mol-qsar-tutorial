@@ -1,0 +1,69 @@
+{
+  "csv": "data/processed/braf.csv",
+  "params": {
+    "tanimoto": 0.85,
+    "max_atom_delta": 4,
+    "series_threshold": 3
+  },
+  "n_transformations": 8,
+  "n_series_local": 1,
+  "series_local_fraction": 0.125,
+  "rules": [
+    {
+      "transformation": "delta_+0",
+      "n_pairs": 153,
+      "n_distinct_scaffolds": 66,
+      "mean_delta_active": -0.1111111111111111,
+      "active_gain_fraction": 0.4444444444444444
+    },
+    {
+      "transformation": "delta_+1",
+      "n_pairs": 42,
+      "n_distinct_scaffolds": 32,
+      "mean_delta_active": -0.09523809523809523,
+      "active_gain_fraction": 0.4523809523809524
+    },
+    {
+      "transformation": "delta_-1",
+      "n_pairs": 36,
+      "n_distinct_scaffolds": 26,
+      "mean_delta_active": 0.2777777777777778,
+      "active_gain_fraction": 0.6388888888888888
+    },
+    {
+      "transformation": "delta_+3",
+      "n_pairs": 30,
+      "n_distinct_scaffolds": 15,
+      "mean_delta_active": -0.9333333333333333,
+      "active_gain_fraction": 0.03333333333333333
+    },
+    {
+      "transformation": "delta_+2",
+      "n_pairs": 17,
+      "n_distinct_scaffolds": 13,
+      "mean_delta_active": -0.7647058823529411,
+      "active_gain_fraction": 0.11764705882352941
+    },
+    {
+      "transformation": "delta_-2",
+      "n_pairs": 10,
+      "n_distinct_scaffolds": 7,
+      "mean_delta_active": 0.6,
+      "active_gain_fraction": 0.8
+    },
+    {
+      "transformation": "delta_-3",
+      "n_pairs": 6,
+      "n_distinct_scaffolds": 5,
+      "mean_delta_active": 1.0,
+      "active_gain_fraction": 1.0
+    },
+    {
+      "transformation": "delta_-4",
+      "n_pairs": 2,
+      "n_distinct_scaffolds": 2,
+      "mean_delta_active": 1.0,
+      "active_gain_fraction": 1.0
+    }
+  ]
+}

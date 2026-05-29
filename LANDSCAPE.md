@@ -146,11 +146,26 @@ bias mitigated" regime but treats unmeasured-pchembl rows as
 definitively inactive — a strong assumption. Downstream pipeline runs
 on the boosted set are not yet performed.
 
-**L-PENDING-Uni-Mol** — refers_to: H2 — polarity: pending — source: blocked
-Uni-Mol SAE descriptor R² on BRAF + CO-ADD reproducibility on Uni-Mol.
-Blocked by RunPod stock shortage (see
-`.omc/pods/20260529_qsar-braf-a40_stockout.yaml`). Retry when stock
-recovers.
+**L-20260529-18** — refers_to: H4 — polarity: supports (granularity-dependent) — source: measured
+*reports/20260529_braf_mmp_mined.json*. Data-mined MMPs on BRAF with
+delta-atom-count buckets (Tanimoto ≥ 0.85 + same scaffold): 8
+transformations, 12.5% series-local. Same magnitude as default-SMIRKS
+result (L-20260529-14). The granularity of the transformation key
+determines whether series-locality is detectable — delta-atom-count
+is too coarse, just like preset SMIRKS. MCS-level substituent keys
+(mmpdb-grade) would test the Auer 2016 claim more directly.
+
+**L-20260529-19** — refers_to: P1/P2 (kinase chemistry observation) — polarity: supports — source: measured
+*Same BRAF MMP mining*. "Smaller is more potent" pattern: delta_-3
+(B has 3 fewer heavy atoms than A) → 100% smaller-compound-active;
+delta_+3 → 3.3% larger-compound-active. Consistent with BRAF ATP
+pocket constraints. Suggests an evidence-driven heuristic for hit
+optimization on this target.
+
+**L-PENDING-Uni-Mol** — refers_to: H2 — polarity: pending — source: running
+Uni-Mol SAE descriptor R² on BRAF (sae_latent=4096, epochs=100). Pod
+8nwcewfjld63l4 (RTX A6000, EU-SE-1) running 2026-05-29. CO-ADD Uni-Mol
+reproducibility check deferred to a future GPU session (budget cap).
 
 ## Compaction policy
 

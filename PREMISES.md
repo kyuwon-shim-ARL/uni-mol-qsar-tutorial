@@ -99,15 +99,30 @@ CO-ADD PA, ≤ 30% should be series-local.
 (`add_F_aromatic`, `add_OH_aromatic`, etc.) applies *broadly* across
 all observed scaffolds — every rule reaches > 5 distinct scaffolds. The
 hypothesis (kinase MMP rules are scaffold-bound) cannot be tested with
-this transformation set. To probe H4 properly, the pipeline would need
-**data-mined MMPs** (extract pair-wise differences from the dataset
-itself, not preset SMIRKS) — that is a separate ticket (Tier 3 in
-LANDSCAPE pending). For default transformations: FALSIFIED — kinase MMP
-rules with these transformations are not series-bound.
+this transformation set. **Data-mined MMP test (2026-05-29,
+`scripts/mmp_mine.py` on BRAF)**: with Tanimoto ≥ 0.85 + same scaffold
+filter + atom-count-delta bucketing, 8 transformation buckets were
+discovered (delta_{-4,-3,-2,-1,+0,+1,+2,+3}). Series-local fraction =
+1/8 = **12.5%** — same magnitude as the default-SMIRKS result. So the
+data-mining approach (with coarse delta-atom-count keys) does not
+expose a different pattern.
+
+The transformation *granularity* matters more than data-mined vs
+preset choice. A finer key (MCS-based substituent identity) would
+split these buckets into many more transformations and might expose
+more series-local rules — but `mmpdb`-grade implementation is out of
+the tutorial scope.
+
+**Side finding**: BRAF data-mined MMPs reveal a clear "smaller is
+more potent" pattern — delta_-3 (102 fewer atoms across pairs) shows
+100% probability of the smaller compound being active, delta_+3
+shows 3.3%. Consistent with BRAF ATP pocket geometric constraints.
+
 **Reference**: Auer et al. 2016 (PMC5198793) — MMP rules are
 context-dependent across scaffolds. (Their finding is about
-data-mined MMPs, not preset SMIRKS — consistent with our result.)
-**Owner**: `counterfactual.scan`, T7.
+data-mined MMPs at MCS-level granularity — consistent with our
+"granularity matters" conclusion.)
+**Owner**: `counterfactual.scan` + `scripts/mmp_mine.py`, T7.
 
 ### H5 — Kinase QSAR has a 2014/2015 temporal break
 
