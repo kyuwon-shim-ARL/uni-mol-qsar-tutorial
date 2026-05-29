@@ -193,3 +193,21 @@ budget cap was hit by BRAF Uni-Mol alone.
 When entries exceed 30, the oldest VALIDATED entries (with subsequent
 confirming evidence) can be summarized into a single rollup entry. The
 LANDSCAPE registry is for traceable evidence, not a journal.
+
+**L-20260529-22** — refers_to: H3 — polarity: qualifies — source: measured
+*reports/20260529_{egfr,jak2}_external_ecfp4.json* (GH #3). Cross-target
+BindingDB external eval: BRAF gap +0.109, EGFR gap +0.052, JAK2 gap
+−0.060. H3 is target-dependent — the JAK2 reversal (external easier) is
+driven by its 14.3%-active external set inflating AUC. Lesson: external
+validation is mandatory *because the gap is unpredictable*, not because
+it always drops. EGFR/JAK2 BindingDB fetched after server recovery
+(prior session HTTP 500).
+
+**L-20260529-23** — refers_to: H4 — polarity: supports — source: measured
+*reports/20260529_braf_mmp_mined_mcs.json* (GH #4). MCS substituent-level
+MMP keys (RDKit rdFMCS): 56 transformations, **58.9% series-local** (33/56)
+vs 12.5% with atom-count-delta keys. H4 verdict flips FALSIFIED→VALIDATING.
+The earlier null was a key-granularity artifact — coarse keys collapse
+distinct substituent swaps into one bucket, washing out scaffold-locality.
+Reproduces Auer 2016 at the granularity they used. Implemented as
+`scripts/mmp_mine.py --key-mode mcs`.

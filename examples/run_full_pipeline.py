@@ -136,12 +136,16 @@ def main():
     print(f"  N={len(ds)}  active={ds.active_fraction:.1%}")
 
     print(f"[2/6] Featurizing ({args.features})")
+    # Instantiate the Uni-Mol featurizer ONCE and reuse it everywhere
+    # (featurize stage + MMP score_fn). Creating a new UniMolFeaturizer per
+    # score_fn call reloads model weights + re-runs CPU conformer generation
+    # on every MMP batch, leaving the GPU idle (see GH issue #1).
+    unimol_featurizer = UniMolFeaturizer() if args.features == "unimol" else None
     if args.features == "ecfp4":
         X, valid = featurize_ecfp4(list(ds.smiles), n_bits=2048)
         feat_names = [f"ecfp_{i}" for i in range(X.shape[1])]
     else:
-        feat = UniMolFeaturizer()
-        X, valid = feat.featurize(list(ds.smiles))
+        X, valid = unimol_featurizer.featurize(list(ds.smiles))
         feat_names = [f"unimol_{i}" for i in range(X.shape[1])]
     X = X[valid]
     y = ds.y[valid]
@@ -266,8 +270,7 @@ def main():
             proba = final.predict_proba(Xs)[:, 1]
             proba[~vs] = 0.0
             return proba
-        feat = UniMolFeaturizer()
-        Xs, vs = feat.featurize(smis)
+        Xs, vs = unimol_featurizer.featurize(smis)
         proba = np.zeros(len(smis))
         if vs.any():
             proba[vs] = final.predict_proba(Xs[vs])[:, 1]

@@ -1,0 +1,405 @@
+{
+  "csv": "data/processed/braf.csv",
+  "params": {
+    "tanimoto": 0.85,
+    "max_atom_delta": 4,
+    "series_threshold": 3
+  },
+  "n_transformations": 56,
+  "n_series_local": 33,
+  "series_local_fraction": 0.5892857142857143,
+  "rules": [
+    {
+      "transformation": "C>>H",
+      "n_pairs": 29,
+      "n_distinct_scaffolds": 21,
+      "mean_delta_active": 0.2413793103448276,
+      "active_gain_fraction": 0.6206896551724138
+    },
+    {
+      "transformation": "H>>H",
+      "n_pairs": 26,
+      "n_distinct_scaffolds": 13,
+      "mean_delta_active": -0.07692307692307693,
+      "active_gain_fraction": 0.46153846153846156
+    },
+    {
+      "transformation": "delta_+0",
+      "n_pairs": 23,
+      "n_distinct_scaffolds": 15,
+      "mean_delta_active": 0.6521739130434783,
+      "active_gain_fraction": 0.8260869565217391
+    },
+    {
+      "transformation": "Cl>>F",
+      "n_pairs": 23,
+      "n_distinct_scaffolds": 16,
+      "mean_delta_active": -0.30434782608695654,
+      "active_gain_fraction": 0.34782608695652173
+    },
+    {
+      "transformation": "C>>F",
+      "n_pairs": 20,
+      "n_distinct_scaffolds": 13,
+      "mean_delta_active": -0.1,
+      "active_gain_fraction": 0.45
+    },
+    {
+      "transformation": "F>>H",
+      "n_pairs": 15,
+      "n_distinct_scaffolds": 11,
+      "mean_delta_active": -0.3333333333333333,
+      "active_gain_fraction": 0.3333333333333333
+    },
+    {
+      "transformation": "F>>FC(F)F",
+      "n_pairs": 14,
+      "n_distinct_scaffolds": 11,
+      "mean_delta_active": -0.42857142857142855,
+      "active_gain_fraction": 0.2857142857142857
+    },
+    {
+      "transformation": "C.C.C>>F.F.F",
+      "n_pairs": 10,
+      "n_distinct_scaffolds": 8,
+      "mean_delta_active": -0.2,
+      "active_gain_fraction": 0.4
+    },
+    {
+      "transformation": "Cl>>FC(F)F",
+      "n_pairs": 10,
+      "n_distinct_scaffolds": 7,
+      "mean_delta_active": -1.0,
+      "active_gain_fraction": 0.0
+    },
+    {
+      "transformation": "CO>>FC(F)F",
+      "n_pairs": 9,
+      "n_distinct_scaffolds": 6,
+      "mean_delta_active": -1.0,
+      "active_gain_fraction": 0.0
+    },
+    {
+      "transformation": "F>>O",
+      "n_pairs": 9,
+      "n_distinct_scaffolds": 7,
+      "mean_delta_active": -0.7777777777777778,
+      "active_gain_fraction": 0.1111111111111111
+    },
+    {
+      "transformation": "C.O>>F.F",
+      "n_pairs": 9,
+      "n_distinct_scaffolds": 8,
+      "mean_delta_active": -0.7777777777777778,
+      "active_gain_fraction": 0.1111111111111111
+    },
+    {
+      "transformation": "F.F.F>>H",
+      "n_pairs": 8,
+      "n_distinct_scaffolds": 8,
+      "mean_delta_active": -0.5,
+      "active_gain_fraction": 0.25
+    },
+    {
+      "transformation": "C.C.O>>F.F.F",
+      "n_pairs": 7,
+      "n_distinct_scaffolds": 6,
+      "mean_delta_active": -0.14285714285714285,
+      "active_gain_fraction": 0.42857142857142855
+    },
+    {
+      "transformation": "H>>O",
+      "n_pairs": 6,
+      "n_distinct_scaffolds": 6,
+      "mean_delta_active": -0.3333333333333333,
+      "active_gain_fraction": 0.3333333333333333
+    },
+    {
+      "transformation": "C>>Cl",
+      "n_pairs": 6,
+      "n_distinct_scaffolds": 6,
+      "mean_delta_active": 0.0,
+      "active_gain_fraction": 0.5
+    },
+    {
+      "transformation": "C>>CO",
+      "n_pairs": 5,
+      "n_distinct_scaffolds": 4,
+      "mean_delta_active": -0.2,
+      "active_gain_fraction": 0.4
+    },
+    {
+      "transformation": "C.C>>H",
+      "n_pairs": 5,
+      "n_distinct_scaffolds": 4,
+      "mean_delta_active": 0.2,
+      "active_gain_fraction": 0.6
+    },
+    {
+      "transformation": "CO>>F",
+      "n_pairs": 4,
+      "n_distinct_scaffolds": 3,
+      "mean_delta_active": 0.0,
+      "active_gain_fraction": 0.5
+    },
+    {
+      "transformation": "Br>>Cl",
+      "n_pairs": 4,
+      "n_distinct_scaffolds": 4,
+      "mean_delta_active": -1.0,
+      "active_gain_fraction": 0.0
+    },
+    {
+      "transformation": "C.C>>F.F",
+      "n_pairs": 4,
+      "n_distinct_scaffolds": 3,
+      "mean_delta_active": 0.5,
+      "active_gain_fraction": 0.75
+    },
+    {
+      "transformation": "CO>>H",
+      "n_pairs": 3,
+      "n_distinct_scaffolds": 3,
+      "mean_delta_active": 0.3333333333333333,
+      "active_gain_fraction": 0.6666666666666666
+    },
+    {
+      "transformation": "CC>>H",
+      "n_pairs": 3,
+      "n_distinct_scaffolds": 3,
+      "mean_delta_active": 0.3333333333333333,
+      "active_gain_fraction": 0.6666666666666666
+    },
+    {
+      "transformation": "Br>>C",
+      "n_pairs": 3,
+      "n_distinct_scaffolds": 2,
+      "mean_delta_active": 1.0,
+      "active_gain_fraction": 1.0
+    },
+    {
+      "transformation": "F>>F",
+      "n_pairs": 2,
+      "n_distinct_scaffolds": 2,
+      "mean_delta_active": -1.0,
+      "active_gain_fraction": 0.0
+    },
+    {
+      "transformation": "Cl>>O",
+      "n_pairs": 2,
+      "n_distinct_scaffolds": 2,
+      "mean_delta_active": 0.0,
+      "active_gain_fraction": 0.5
+    },
+    {
+      "transformation": "C.O>>H",
+      "n_pairs": 2,
+      "n_distinct_scaffolds": 2,
+      "mean_delta_active": -1.0,
+      "active_gain_fraction": 0.0
+    },
+    {
+      "transformation": "CNC>>CO",
+      "n_pairs": 2,
+      "n_distinct_scaffolds": 2,
+      "mean_delta_active": 1.0,
+      "active_gain_fraction": 1.0
+    },
+    {
+      "transformation": "CN>>O",
+      "n_pairs": 2,
+      "n_distinct_scaffolds": 2,
+      "mean_delta_active": 1.0,
+      "active_gain_fraction": 1.0
+    },
+    {
+      "transformation": "CC>>F",
+      "n_pairs": 2,
+      "n_distinct_scaffolds": 2,
+      "mean_delta_active": 1.0,
+      "active_gain_fraction": 1.0
+    },
+    {
+      "transformation": "C>>C.F",
+      "n_pairs": 2,
+      "n_distinct_scaffolds": 2,
+      "mean_delta_active": -1.0,
+      "active_gain_fraction": 0.0
+    },
+    {
+      "transformation": "Br>>H",
+      "n_pairs": 2,
+      "n_distinct_scaffolds": 1,
+      "mean_delta_active": 1.0,
+      "active_gain_fraction": 1.0
+    },
+    {
+      "transformation": "delta_-1",
+      "n_pairs": 2,
+      "n_distinct_scaffolds": 2,
+      "mean_delta_active": -1.0,
+      "active_gain_fraction": 0.0
+    },
+    {
+      "transformation": "Cl.Cl>>H",
+      "n_pairs": 1,
+      "n_distinct_scaffolds": 1,
+      "mean_delta_active": -1.0,
+      "active_gain_fraction": 0.0
+    },
+    {
+      "transformation": "CO>>CO",
+      "n_pairs": 1,
+      "n_distinct_scaffolds": 1,
+      "mean_delta_active": -1.0,
+      "active_gain_fraction": 0.0
+    },
+    {
+      "transformation": "Cl>>H",
+      "n_pairs": 1,
+      "n_distinct_scaffolds": 1,
+      "mean_delta_active": -1.0,
+      "active_gain_fraction": 0.0
+    },
+    {
+      "transformation": "C>>N",
+      "n_pairs": 1,
+      "n_distinct_scaffolds": 1,
+      "mean_delta_active": -1.0,
+      "active_gain_fraction": 0.0
+    },
+    {
+      "transformation": "Br>>F",
+      "n_pairs": 1,
+      "n_distinct_scaffolds": 1,
+      "mean_delta_active": -1.0,
+      "active_gain_fraction": 0.0
+    },
+    {
+      "transformation": "CO>>Cl",
+      "n_pairs": 1,
+      "n_distinct_scaffolds": 1,
+      "mean_delta_active": -1.0,
+      "active_gain_fraction": 0.0
+    },
+    {
+      "transformation": "H>>N",
+      "n_pairs": 1,
+      "n_distinct_scaffolds": 1,
+      "mean_delta_active": 1.0,
+      "active_gain_fraction": 1.0
+    },
+    {
+      "transformation": "C>>F.F.F",
+      "n_pairs": 1,
+      "n_distinct_scaffolds": 1,
+      "mean_delta_active": 1.0,
+      "active_gain_fraction": 1.0
+    },
+    {
+      "transformation": "C.C>>F.F.F",
+      "n_pairs": 1,
+      "n_distinct_scaffolds": 1,
+      "mean_delta_active": 1.0,
+      "active_gain_fraction": 1.0
+    },
+    {
+      "transformation": "C.Cl>>Cl",
+      "n_pairs": 1,
+      "n_distinct_scaffolds": 1,
+      "mean_delta_active": 1.0,
+      "active_gain_fraction": 1.0
+    },
+    {
+      "transformation": "OC(F)(F)F>>OC(F)(F)F",
+      "n_pairs": 1,
+      "n_distinct_scaffolds": 1,
+      "mean_delta_active": 1.0,
+      "active_gain_fraction": 1.0
+    },
+    {
+      "transformation": "C.C.C>>H",
+      "n_pairs": 1,
+      "n_distinct_scaffolds": 1,
+      "mean_delta_active": -1.0,
+      "active_gain_fraction": 0.0
+    },
+    {
+      "transformation": "C>>CCO",
+      "n_pairs": 1,
+      "n_distinct_scaffolds": 1,
+      "mean_delta_active": 1.0,
+      "active_gain_fraction": 1.0
+    },
+    {
+      "transformation": "CNC>>H",
+      "n_pairs": 1,
+      "n_distinct_scaffolds": 1,
+      "mean_delta_active": 1.0,
+      "active_gain_fraction": 1.0
+    },
+    {
+      "transformation": "CC(N)=O>>O",
+      "n_pairs": 1,
+      "n_distinct_scaffolds": 1,
+      "mean_delta_active": -1.0,
+      "active_gain_fraction": 0.0
+    },
+    {
+      "transformation": "delta_+1",
+      "n_pairs": 1,
+      "n_distinct_scaffolds": 1,
+      "mean_delta_active": 1.0,
+      "active_gain_fraction": 1.0
+    },
+    {
+      "transformation": "FC(F)F>>OC(F)(F)F",
+      "n_pairs": 1,
+      "n_distinct_scaffolds": 1,
+      "mean_delta_active": 1.0,
+      "active_gain_fraction": 1.0
+    },
+    {
+      "transformation": "C>>CNC",
+      "n_pairs": 1,
+      "n_distinct_scaffolds": 1,
+      "mean_delta_active": -1.0,
+      "active_gain_fraction": 0.0
+    },
+    {
+      "transformation": "FC(F)F>>H",
+      "n_pairs": 1,
+      "n_distinct_scaffolds": 1,
+      "mean_delta_active": 1.0,
+      "active_gain_fraction": 1.0
+    },
+    {
+      "transformation": "delta_-2",
+      "n_pairs": 1,
+      "n_distinct_scaffolds": 1,
+      "mean_delta_active": 1.0,
+      "active_gain_fraction": 1.0
+    },
+    {
+      "transformation": "CCC>>H",
+      "n_pairs": 1,
+      "n_distinct_scaffolds": 1,
+      "mean_delta_active": -1.0,
+      "active_gain_fraction": 0.0
+    },
+    {
+      "transformation": "CCCC>>H",
+      "n_pairs": 1,
+      "n_distinct_scaffolds": 1,
+      "mean_delta_active": 1.0,
+      "active_gain_fraction": 1.0
+    },
+    {
+      "transformation": "CNC>>CNC",
+      "n_pairs": 1,
+      "n_distinct_scaffolds": 1,
+      "mean_delta_active": -1.0,
+      "active_gain_fraction": 0.0
+    }
+  ]
+}

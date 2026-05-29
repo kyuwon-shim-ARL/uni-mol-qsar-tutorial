@@ -62,11 +62,11 @@ def _diff_label(a_label: int, b_label: int) -> str:
 
 
 def _transform_key(smi_a: str, smi_b: str) -> str:
-    """Coarse transformation key: sorted (heavy_atom_count_A, heavy_atom_count_B).
+    """Coarse transformation key: heavy-atom-count delta.
 
-    A full MCS-based key would be ideal but heavy. For now we bucket
-    by atom-count change and the lexicographically smaller / larger
-    sides, which is enough to group "added a methyl" pairs together.
+    Buckets by atom-count change — enough to group "added a methyl"
+    pairs together, but too coarse to expose scaffold-bound substituent
+    rules (see GH issue #4). Use --key-mode mcs for the finer key.
     """
     a, b = Chem.MolFromSmiles(smi_a), Chem.MolFromSmiles(smi_b)
     if a is None or b is None:
@@ -76,7 +76,61 @@ def _transform_key(smi_a: str, smi_b: str) -> str:
     return f"delta_{delta:+d}"
 
 
-def mine(df: pd.DataFrame, tanimoto: float, max_atom_delta: int) -> list[dict]:
+def _mcs_transform_key(smi_a: str, smi_b: str) -> str:
+    """mmpdb-grade transformation key via maximum common substructure.
+
+    Compute the MCS of (A, B); the "transformation" is the pair of
+    residues (atoms in A not in MCS, atoms in B not in MCS) rendered as
+    canonical fragment SMILES. This is the substituent-level key Auer
+    et al. 2016 used — far finer than atom-count delta.
+
+    Returns a canonical "fragA>>fragB" string, or a fallback delta key
+    if MCS fails / is degenerate.
+    """
+    from rdkit.Chem import rdFMCS
+
+    a, b = Chem.MolFromSmiles(smi_a), Chem.MolFromSmiles(smi_b)
+    if a is None or b is None:
+        return "invalid"
+    try:
+        res = rdFMCS.FindMCS(
+            [a, b], timeout=5,
+            atomCompare=rdFMCS.AtomCompare.CompareElements,
+            bondCompare=rdFMCS.BondCompare.CompareOrderExact,
+            completeRingsOnly=True,
+        )
+    except Exception:
+        return _transform_key(smi_a, smi_b)
+    if res.canceled or not res.smartsString:
+        return _transform_key(smi_a, smi_b)
+    core = Chem.MolFromSmarts(res.smartsString)
+    if core is None:
+        return _transform_key(smi_a, smi_b)
+
+    def _residue(mol):
+        match = mol.GetSubstructMatch(core)
+        if not match:
+            return "?"
+        rw = Chem.RWMol(mol)
+        for idx in sorted(match, reverse=True):
+            rw.RemoveAtom(idx)
+        frag = rw.GetMol()
+        try:
+            Chem.SanitizeMol(frag)
+            smi = Chem.MolToSmiles(frag, canonical=True)
+        except Exception:
+            return "?"
+        return smi if smi else "H"  # empty residue = hydrogen (no substituent)
+
+    ra, rb = _residue(a), _residue(b)
+    # Order so the key is symmetric-direction-aware (small side first by string)
+    lo, hi = sorted([ra, rb])
+    return f"{lo}>>{hi}"
+
+
+def mine(df: pd.DataFrame, tanimoto: float, max_atom_delta: int,
+         key_mode: str = "delta") -> list[dict]:
+    keyfn = _mcs_transform_key if key_mode == "mcs" else _transform_key
     smis = df["canonical_smiles"].to_numpy()
     y = df["active"].to_numpy().astype(int)
     n = len(smis)
@@ -115,7 +169,7 @@ def mine(df: pd.DataFrame, tanimoto: float, max_atom_delta: int) -> list[dict]:
                 seen_pairs.add(pair)
                 if y[i] == y[j]:
                     continue
-                key = _transform_key(smis[i], smis[j])
+                key = keyfn(smis[i], smis[j])
                 if key == "invalid":
                     continue
                 transform_bucket[key].append({
@@ -151,12 +205,15 @@ def main() -> int:
     p.add_argument("--out", default=None)
     p.add_argument("--top-k", type=int, default=20,
                    help="show top-k transformations by pair count")
+    p.add_argument("--key-mode", choices=["delta", "mcs"], default="delta",
+                   help="transformation key: 'delta' (atom-count, coarse) or "
+                        "'mcs' (substituent-level via FMCS, mmpdb-grade).")
     args = p.parse_args()
 
     df = pd.read_csv(args.csv)
     df = df.dropna(subset=["canonical_smiles", "active"]).reset_index(drop=True)
-    print(f"Loaded {len(df)} mols from {args.csv}")
-    rules = mine(df, args.tanimoto, args.max_atom_delta)
+    print(f"Loaded {len(df)} mols from {args.csv} (key-mode={args.key_mode})")
+    rules = mine(df, args.tanimoto, args.max_atom_delta, key_mode=args.key_mode)
     n_total = len(rules)
     n_series_local = sum(
         1 for r in rules if 0 < r["n_distinct_scaffolds"] < args.series_threshold

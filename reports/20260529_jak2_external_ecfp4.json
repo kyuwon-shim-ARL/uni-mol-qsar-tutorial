@@ -1,0 +1,33 @@
+{
+  "csv": "data/processed/jak2.csv",
+  "features": "ecfp4",
+  "split_mode": "scaffold",
+  "n": 12680,
+  "active_pct": 0.3449526813880126,
+  "oof": {
+    "AUC": 0.9205386810026324,
+    "AUPRC": 0.87928102898023,
+    "MCC@0.5": 0.6736877080216791
+  },
+  "sae": {
+    "latent_dim": 2048,
+    "dead_ratio": 0.0,
+    "r2_median": 0.9176287353038788,
+    "r2_above_05": 10,
+    "r2_total": 10
+  },
+  "mmp_n_rules_excl_zero": 3,
+  "mmp_n_cross_series": 7,
+  "mmp_n_series_local": 1,
+  "time_split": null,
+  "external": {
+    "csv": "data/external/jak2_bindingdb.csv",
+    "n": 900,
+    "active_pct": 0.14333333333333334,
+    "AUC": 0.9807357805728993,
+    "AUPRC": 0.9224577820451759,
+    "oof_auc": 0.9205386810026324,
+    "auc_gap": -0.060197099570266976,
+    "gap_level": "ok"
+  }
+}
