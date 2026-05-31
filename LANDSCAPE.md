@@ -271,7 +271,7 @@ freeze-depth control. The finetuning lane can therefore reuse the *exact
 same* scaffold folds as the ECFP4/frozen lanes — scaffold parity
 (tcrit's #1 critical blocker) is achievable, not merely asserted.
 
-**L-20260529-31** — refers_to: H6, H7 — polarity: supports — source: measured
+**L-20260529-36** — refers_to: H6, H7 — polarity: supports — source: measured
 *reports/20260529_split-compare_unimol.json (tyms)*. Frozen Uni-Mol
 embedding (512-d, CPU) + XGBoost on TYMS: random AUC 0.781, **scaffold
 AUC 0.731 (fold_std 0.035)**. Versus ECFP4 scaffold 0.800 → **gap
@@ -309,3 +309,141 @@ tree remains marginally best on this target. from-scratch control
 infra-blocked (unimol_tools always loads pretrained). Confirms H6's core
 point survives finetuning: the 3D-foundation-model advantage is not
 automatic on target-specific kinase QSAR.
+
+**L-20260529-37** — refers_to: H7, H6 — polarity: supports (partial) — source: measured
+*reports/{tyms,braf}_h7_finetune.json* (RTX A6000, $1.28 total; supersedes
++ completes L-34). Finetuning lane on **two** targets with the from-scratch
+control RESOLVED (monkeypatched `UniMolModel.load_pretrained_weights`).
+Scaffold 5-fold, `split='select'` parity, epochs=30, seed 0:
+
+| lane | TYMS (637) | BRAF (5751) |
+|------|-----------|-------------|
+| ECFP4+XGB | 0.800 | 0.909 |
+| frozen UniMol | 0.731 | 0.806 |
+| **finetuned** | **0.792±0.084** | **0.890±0.021** |
+| from-scratch | 0.641±0.116 | 0.758±0.031 |
+
+Three findings, consistent enzyme+kinase: (1) finetuning recovers most of
+the frozen deficit (TYMS +0.061, BRAF +0.084); (2) **pretraining is the
+driver** — finetuned ≫ from-scratch (TYMS +0.151, BRAF +0.132), ruling out
+"any NN beats XGBoost"; (3) finetuning only reaches **ECFP4 parity, never
+superiority** (TYMS −0.008, BRAF −0.019, within per-fold std). BRAF
+finetune 0.890 cross-validates L-34's independent 0.887. Resolves L-34's
+from-scratch infra-block.
+
+**L-20260529-38** — refers_to: H7 (T-variance) — polarity: qualifies — source: code-audit
+*unimol_tools tasks/trainer.py:54,1125*. MolTrain is effectively
+deterministic: `Trainer.set_seed(config.seed)` overrides any external
+torch seed, and the DataLoader shuffle generator is hardcoded
+(`get_ddp_generator(seed=3407)`). Empirically seeds 0/1 differed <0.002 on
+one fold only. So multi-seed CI on this finetuning stack is degenerate —
+the honest uncertainty for a scaffold-CV AUC is the **per-fold std**
+(reported in L-37), not a run-to-run CI. Real seed variance needs patching
+the hardcoded generator. Justifies the 1-seed protocol used in L-37.
+
+### Dense-SAE monosemanticity closure (#6 / H2 final, 2026-05-29)
+
+**L-20260529-39** — refers_to: H2 — polarity: supports (closes ECFP4-only caveat on the *concept* axis) — source: measured
+*uni-mol-QSAR/results/e191/h2_dense_monosem_rescore.json* (GPU-free re-score
+of the sibling project's saved e191v3 dense SAE). Tutorial's strict per-latent
+criterion (sel≥0.5, margin≥0.2; `scripts/sae_monosemanticity.py` verbatim)
+applied to the dense Uni-Mol2 SAE (768→6144, 1144 OOF embeddings):
+**0/6144 monosemantic, top selectivity 0.415 (HeavyAtomCount)** — vs ECFP4
+0/2048, 0.379. Dense 3D foundation-model SAE is **no more concept-monosemantic
+than ECFP4**. Alignment proven by reproducing the original's population R² (MolWt
+0.914 vs 0.927, FractionCSP3 0.948 vs 0.937, HeavyAtomCount 0.947 vs 0.944 —
+all ±0.03). **CONFIRMS (not refutes) the original's own mature finding**: its
+e126 (z-scored, proper training) reports descriptor projection median R²≈0,
+only 2.5% of latents at R²>0.1 — i.e. the original itself measured near-zero
+*descriptor* alignment. (e103's earlier "0" is NOT cited: e126 disavowed it as
+a no-z-score training artifact.) **Axis caveat**: the original separately
+reports ~13.7% *class-discriminative* monosemanticity (e126, top1_class_frac>0.8)
+— a different axis (latent↔phenotypic class, not latent↔chemical concept) we did
+NOT test and do NOT refute. So the unconditional claim is narrow: SAE latents
+are not clean single-*concept* (descriptor/substructure) detectors on dense as on
+ECFP4. Method lesson: reuse saved artifacts + apply the stricter metric — no GPU.
+
+**L-20260529-41** — refers_to: H2 — polarity: supports (robustness) — source: measured
+*uni-mol-QSAR/results/e191/h2_16x_monosem.json + h2_substructure_monosem.json*.
+Two stress tests confirm the 0/6144 is not a config artifact. (i) **Expansion**:
+retrained dense SAE at 16× (768→12288, dead_ratio 0, λ=0.001, 200 ep) → still
+**0/12288 monosemantic**, top selectivity creeps only 0.415→0.496 (<0.5), while
+population R²→0.9999 (overparameterized memorization, not interpretability —
+reinforces that R² is the wrong metric). (ii) **Readout**: re-scoring the 8×
+activations against a 46-group RDKit functional-group (substructure) panel
+instead of scalar descriptors → **0/6144, top sel 0.201 (fr_unbrch_alkane)**.
+So *concept*-monosemanticity fails across 2 expansions (8×/16×, both z-scored)
+× 2 readout families (descriptor, substructure), and agrees with the original's
+own z-scored descriptor projection (e126, median R²≈0). (We do NOT cite e103's
+sparsity sweep here — its 0 was a no-z-score training artifact per e126; our
+finding rests only on properly z-scored runs.) **Practical lesson recorded**:
+SAE's "automatic concept dictionary" does not transfer to these molecular
+embeddings on the descriptor/substructure axis; interpretability that does NOT
+depend on naming individual latents (occlusion atom-attribution, MMP
+substitution) is the reliable path. *Limitations*: substructure panel = RDKit
+fr_* only (bespoke scaffolds untested); the *class-discriminative* axis
+(original e126 ~13.7%) is a separate question, not addressed here.
+
+**L-20260529-40** — refers_to: H7, H6 — polarity: qualifies — source: measured
+*uni-mol-QSAR/results/no_ft_ablation/no_ft_xgb_oof.json* (#7 cross-check vs
+sibling project). The original's "no-FT" ablation is **frozen-pretrained**
+Uni-Mol2 + XGB (= tutorial's *frozen* lane), NOT a random-init control. On PA
+(4-class, macro-AUC): frozen 0.8099 → finetuned 0.8293, **Δ +0.019 (marginal)**.
+Two implications: (1) the original **lacks the from-scratch/random-init
+control**, so H7's L-37 from-scratch arm (the load-bearing "pretraining is the
+driver" evidence) is **non-redundant** — the sibling never ran it. (2) Cross-
+dataset nuance: finetuning gain is small on diverse PA (+0.019) but larger on
+target-specific BRAF/TYMS (+0.084 / +0.061, L-37) — frozen general-chemistry
+embeddings are near-sufficient for phenotypic-diverse data but need adaptation
+for single-target SAR. Consistent with H6.
+
+### Occlusion interpretability — reproduction + transfer test (2026-05-31)
+
+**L-20260531-42** — refers_to: H2 (interpretability path) — polarity: qualifies — source: measured
+*Independent re-run of sibling project + new tutorial run.* Settles whether the
+dictionary-free interpretability path (atom occlusion) is the reliable one.
+(i) **Reproduced** the sibling project's e189v3 prediction-occlusion (atom→C
+mask → Δp(W), 5-fold ensemble) from saved models, output to /tmp (original
+untouched): FQ-pharmacophore match_relaxed **0.727 (exact match to stored 0.727)**,
+match_strict 0.709 vs 0.721, FQ max-Δp 0.448 vs 0.447, nonFQ 0.128 vs 0.132,
+gate_passed True. So the **72.7% pharmacophore-localization claim is real and
+reproducible** — it lives in `occlusion_full.json` (prediction-occlusion), NOT
+the SAE-feature occlusion (`sae_occlusion`, which failed its gate 0%/12%). The
+two are different methods; only the SAE-coupled one fails.
+(ii) **Transfer test (NEW, confidence-stratified)**: ran the SAME atom-occlusion on
+the tutorial's finetuned Uni-Mol BRAF classifier (`scripts/occlusion_braf.py`, 50
+actives + 50 inactives). **Verdict: NULL-CONFIRMED** — no active-vs-inactive
+localization contrast, and the null *holds on confident molecules* (ruling out the
+"low-confidence dilution" explanation). All (n=50/50): active max|Δp| 0.121 vs inactive
+0.115, one-sided Mann-Whitney p=0.27. Confident subset |p−0.5|≥0.2 (n=20/17): active
+0.105 vs inactive 0.110 (actives if anything *lower*), MWU p=0.52. Top-1 concentration
+~0.24–0.26 both classes (flat). Contrast this with the reproduced FQ reference (3.5×
+FQ-vs-nonFQ Δp). **Occlusion localization did NOT transfer to the BRAF kinase model**,
+robustly to model confidence. *Caveat*: only 2 of 5 fold models were saved (partial
+ensemble); sampled molecules may overlap the finetune training set (not OOF) — a fuller
+test needs a 5-fold OOF retrain. **Lesson**: occlusion is a *real* but *not automatic*
+interpretability win — it shone on a phenotypic set with a textbook pharmacophore (FQ)
+and is null on single-target kinase actives here. The "occlusion+MMP is the reliable
+path" claim must be qualified: reliable where a localizable pharmacophore + well-behaved
+model exist, not guaranteed. Outputs: `reports/occlusion_braf.json`; sibling repro
+`/tmp/orig_occl_repro/occlusion_full.json` (not committed).
+
+**L-20260531-43** — refers_to: H2 — polarity: refutes (closes the last SAE axis) — source: measured
+*reports/sae_class_monosem.json* (`scripts/sae_class_monosem.py`, CPU, e191 dense
+activations re-scored). The concept axis was already ~0; this closes the **class-
+discriminative axis** (latent ↔ one phenotypic class, the original's actual headline
+metric, top1_class_frac) on the SAME 768-d e191 embedding, against a proper random-init
+null. **Verdict: NULL.** Mean top1_class_frac: trained **0.525** vs random-init null
+**0.519** vs majority-class baseline **0.518** — trained is only +0.006 above null and
++0.007 above base rate. No latent (trained OR null) passes the 0.7/0.8 monosemantic bar
+(0/6144 both); at >0.6, trained 3.2% vs null 2.0% (negligible). The Mann-Whitney
+p≈0 is a **large-n artifact** (6144 latents make a +0.006 mean shift "significant") —
+effect size is what matters and it is ~zero. So **SAE latents on this dense embedding
+are no more class-selective than random projections; they merely reflect the majority
+class (EP 52%)**. Both SAE axes (concept + class) are now ~null on the same
+representation → on these molecular embeddings SAE delivers no interpretable dictionary
+on either axis. *Caveat/scope*: the original's 13.7% class-mono was on a DIFFERENT 512-d
+3-class (collapsed) embedding (eppe_v1) — NOT refuted here; class-collapse + that
+representation may genuinely carry more selectivity. This result is specific to the 768-d
+e191 dense SAE (the one where we measured concept-axis 0), making concept+class axes
+now both measured on one representation.

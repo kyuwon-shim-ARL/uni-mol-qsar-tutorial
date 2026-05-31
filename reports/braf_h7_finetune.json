@@ -1,0 +1,74 @@
+{
+  "csv": "data/processed/braf.csv",
+  "n_molecules": 5751,
+  "active_fraction": 0.4086,
+  "kfold": 5,
+  "fold_seed": 42,
+  "hp": {
+    "epochs": 30,
+    "lr": 0.0001,
+    "batch_size": 32,
+    "freeze_layers": null
+  },
+  "runs": [
+    {
+      "mode": "finetune",
+      "seed": 0,
+      "oof_auc": 0.8903,
+      "oof_auprc": 0.851,
+      "per_fold_auc": [
+        0.8883,
+        0.9025,
+        0.8967,
+        0.859,
+        0.9247
+      ],
+      "fold_std": 0.0214
+    },
+    {
+      "mode": "scratch",
+      "seed": 0,
+      "oof_auc": 0.7585,
+      "oof_auprc": 0.6636,
+      "per_fold_auc": [
+        0.7616,
+        0.8081,
+        0.7665,
+        0.7114,
+        0.748
+      ],
+      "fold_std": 0.0312
+    }
+  ],
+  "summary": {
+    "finetune": {
+      "n_seeds": 1,
+      "mean_oof_auc": 0.8903,
+      "std": 0.0,
+      "ci95": [
+        0.8903,
+        0.8903
+      ],
+      "seeds": [
+        0.8903
+      ]
+    },
+    "scratch": {
+      "n_seeds": 1,
+      "mean_oof_auc": 0.7585,
+      "std": 0.0,
+      "ci95": [
+        0.7585,
+        0.7585
+      ],
+      "seeds": [
+        0.7585
+      ]
+    }
+  },
+  "baseline_to_beat": {
+    "ecfp4_scaffold_auc": 0.8,
+    "frozen_unimol_scaffold_auc": 0.731,
+    "note": "from reports/20260529_split-compare_{ecfp4,unimol}.json (tyms)"
+  }
+}

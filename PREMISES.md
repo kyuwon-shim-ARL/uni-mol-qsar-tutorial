@@ -41,7 +41,8 @@ the chemical diversity of the input distribution. SAR-narrow target
 datasets (top-10 scaffold share ≥ 0.30) should not be expected to match
 the 0.824 R² achieved on CO-ADD PA (diverse phenotypic).
 
-**Status**: FALSIFIED on both ECFP4 and Uni-Mol
+**Status**: FALSIFIED on both ECFP4 and Uni-Mol (population R²); per-latent
+monosemanticity ≈0 on both representations (ECFP4 + dense, resolved 2026-05-29)
 **Measurement (2026-05-28/29, ECFP4 SAE latent=2048 epochs=30; Uni-Mol SAE latent=4096 epochs=100 on RTX A6000)**:
 | Dataset | feature | latent | top10 scaffold% | SAE R²_median |
 |---------|---------|--------|-----------------|---------------|
@@ -73,13 +74,64 @@ descriptor detector** (per-latent polysemantic). Descriptor-R² therefore
 *overstates* per-feature interpretability, exactly the Bharadwaj-2024
 distinction. So H2's "SAE is interpretable regardless of diversity" is
 true only at the population (R²) level; at the monosemantic-feature
-level the ECFP4 SAE is poorly interpretable. **Caveat**: ECFP4 SAE only;
-Uni-Mol SAE monosemanticity (Bharadwaj's actual setting) needs GPU and
-is the remaining open sub-question.
+level the ECFP4 SAE is poorly interpretable.
+
+**Dense-embedding sub-question RESOLVED (2026-05-29, GPU-free):** the
+prior caveat ("Uni-Mol SAE monosemanticity needs GPU") is closed by
+*re-scoring* the sibling project's already-trained dense SAE rather than
+re-running one. The `uni-mol-QSAR` project's e191v3 SAE (768→6144 on
+1,144 OOF Uni-Mol2 embeddings; population descriptor-R² 0.89–0.95) was
+re-scored under *this* repo's
+exact strict criterion (`scripts/sae_monosemanticity.py`, sel≥0.5 +
+margin≥0.2, verbatim). Result: **0 / 6144 monosemantic (0.00%), top
+selectivity 0.415 (HeavyAtomCount)** — essentially identical to ECFP4
+(0/2048, 0.379). The dense 3D foundation-model SAE is **no more
+monosemantic than ECFP4** at the per-latent level; both sit far below
+the 0.5 bar. Alignment was proven by reproducing the original's
+population R² (MolWt 0.914 vs 0.927, FractionCSP3 0.948 vs 0.937, etc.).
+**This CONFIRMS (does not refute) the original project's own mature
+finding.** Its e126 experiment (z-scored, proper training) reports the
+*descriptor* projection at median R²≈0 (only 2.5% of latents reach even
+the trivial R²>0.1 bar) — the original *itself* measured near-zero
+descriptor alignment. (Its earlier e103 "0" is *not* cited here: e126
+disavowed it as a no-z-score / full-batch training artifact.)
+**"Monosemantic" splits into two axes — keep them separate:**
+- *concept axis* (latent ↔ one physicochemical descriptor or substructure):
+  ≈0 on both ECFP4 (0/2048) and dense (0/6144 here), and matches the
+  original's own descriptor R²≈0. This is the axis our strict criterion
+  tests, and H2's verdict on it is **unconditional**.
+- *class-discriminative axis* (latent ↔ one phenotypic class,
+  top1_class_frac>0.8): the original reports ~13.7% (e126, z-scored). We
+  did **not** measure this and do **not** refute it — it is a different
+  question (predicts class ≠ encodes one human concept).
+So the honest claim is narrow: SAE latents are **not clean single-concept
+detectors** (descriptor/substructure), on dense as on ECFP4 — *not* that
+SAE latents carry no class signal.
+**Scope note (#6-general vs #6-scoped):** e191 is a *PA-finetuned* dense
+SAE (diverse phenotypic), so this closes the *general* dense-embedding
+question on the concept axis. The tutorial's own setting (frozen Uni-Mol
+on BRAF/CO-ADD) is not separately measured, but with concept-
+monosemanticity ≈0 across two representations and two readout families,
+the same result is the strongly-predicted outcome.
+**Robustness (not a config artifact, 2026-05-29):** the 0 survives two
+stress tests. (i) *Expansion*: retraining at 16× (768→12288, dead_ratio 0)
+still gives **0/12288 monosemantic** — top selectivity only creeps 0.415→0.496
+(still below 0.5), while population R²→0.9999 (pure overparameterized fit, not
+interpretability). (ii) *Readout*: re-scoring against a 46-group RDKit
+functional-group (substructure) panel instead of scalar descriptors gives
+**0/6144** (top sel 0.201). So per-latent monosemanticity fails across two
+expansions (8×/16×) AND two readout families (physicochemical descriptors,
+functional-group substructures); sparsity was already swept (e103: 3λ×5seeds
+all 0). The conclusion is a property of the SAE-on-molecular-embedding
+problem, not of one hyperparameter choice. *Limitation*: the substructure
+panel is RDKit fr_* only — bespoke scaffolds/motifs untested.
 **Reference**: Bharadwaj et al. 2024 (arXiv:2512.08077) — SMI-TED SAE on
 diverse PubChem reports high variance explained, but no diversity
-ablation.
-**Owner**: `sae.descriptor_recovery` + `scripts/sae_monosemanticity.py`, T8.
+ablation (and no per-latent monosemanticity test — exactly the gap this
+closes).
+**Owner**: `sae.descriptor_recovery` + `scripts/sae_monosemanticity.py`, T8;
+re-score `uni-mol-QSAR/scripts/h2_dense_monosem_rescore.py` →
+`results/e191/h2_dense_monosem_rescore.json`.
 
 ### H3 — External BindingDB hold-out exposes covariate shift on kinase
 
@@ -247,39 +299,62 @@ just `get_repr`) should adapt the representation to the target and
 close or reverse that −0.105 gap. This is the foundation→finetuning
 paradigm the tutorial currently omits (it uses Uni-Mol frozen only).
 
-**Status**: PARTIALLY VALIDATED — finetuning recovers most of the gap but
-does not reverse it (measured 2026-05-29, RTX A6000).
+**Status**: PARTIALLY VALIDATED on **two** targets (BRAF kinase + TYMS
+enzyme) — finetuning recovers most of the frozen-embedding gap and the
+from-scratch control confirms pretraining is the driver, but finetuning
+reaches **parity with, not superiority over, ECFP4** (measured 2026-05-29,
+RTX A6000, total $1.28). The earlier "from-scratch infra-blocked"
+limitation is now **RESOLVED**.
 
-**Measurement (BRAF, scaffold 5-fold, MolTrain finetune epochs=20, 2 seeds)**:
+**Measurement (scaffold 5-fold, `split='select'` parity, MolTrain epochs=30, seed 0)**:
 
-| Lane (BRAF, scaffold OOF AUC) | AUC |
-|-------------------------------|-----|
-| ECFP4 + XGB | 0.909 |
-| **finetuned Uni-Mol** (epochs=20) | **0.887 ± 0.006** (seeds 0.892, 0.881) |
-| frozen Uni-Mol + XGB | 0.806 |
+| Lane (scaffold OOF AUC ± per-fold std) | TYMS (enzyme, 637) | BRAF (kinase, 5751) |
+|----------------------------------------|--------------------|---------------------|
+| ECFP4 + XGB | 0.800 | 0.909 |
+| frozen Uni-Mol + XGB | 0.731 | 0.806 |
+| **finetuned Uni-Mol** | **0.792 ± 0.084** | **0.890 ± 0.021** |
+| from-scratch Uni-Mol (random init) | 0.641 ± 0.116 | 0.758 ± 0.031 |
 
-**Interpretation**: finetuning closes **79% of the frozen→ECFP4 gap**
-(0.806 → 0.887 = +0.081 of the 0.103 deficit). The foundation→finetune
-paradigm clearly helps — the representation adapts to the target. **But
-ECFP4 still wins by 0.022**, ~4× the finetuned seed-spread (0.006), so the
-gap is real if small. H7's claim ("recovers OR reverses the gap") is
-**recovered, not reversed**: on BRAF a 2D fingerprint + tree model remains
-marginally the best, even against a finetuned 3D foundation model.
-Practical takeaway for the tutorial: the foundation-model advantage is NOT
-automatic on target-specific data — frozen embeddings lose, finetuning
-mostly catches up, and the simple ECFP4 baseline is a genuinely strong,
-cheap competitor.
+(BRAF finetune 0.890 cross-validates the independent epochs=20 / 2-seed run
+that measured 0.887 ± 0.006 — same conclusion, two code paths.)
 
-**Limitation**: the from-scratch (random-init) control is **infra-blocked**
-— `unimol_tools.MolTrain` always loads the pretrained backbone
-(`pretrained_model_path=""` errors needing dict.txt). So this result shows
-"finetuning ≫ frozen" but cannot fully separate "pretraining helps" from
-"end-to-end NN training helps". A proper from-scratch arm needs deeper
-unimol_tools surgery (left as future work).
-**Owner**: `scripts/.../h7_finetune.py` (MolTrain wrapper), GH-flavored H7.
+**Interpretation** — three findings, consistent across enzyme and kinase:
+1. **Finetuning recovers most of the frozen deficit**: TYMS 0.731→0.792
+   (+0.061), BRAF 0.806→0.890 (+0.084 ≈ 80% of the 0.103 gap). The
+   representation adapts to the target.
+2. **Pretraining is the driver, not just end-to-end NN training** — the
+   from-scratch control (same architecture, random init) lands far below
+   finetuned: TYMS 0.641 vs 0.792 (**+0.151**), BRAF 0.758 vs 0.890
+   (**+0.132**). This is the load-bearing control: it rules out "any NN
+   beats XGBoost" and isolates the pretrained weights as the cause.
+3. **But finetuning only reaches ECFP4 parity, never superiority**:
+   TYMS 0.792 vs 0.800 (−0.008), BRAF 0.890 vs 0.909 (−0.019) — both
+   within the per-fold std. On single-target QSAR a 2D fingerprint + tree
+   model stays as good as a finetuned 3D foundation model, far cheaper.
+
+**Practical takeaway for the tutorial**: the foundation-model advantage is
+NOT automatic on target-specific data. Frozen embeddings lose to ECFP4;
+finetuning catches up to parity (and pretraining demonstrably causes that
+catch-up); cheap ECFP4 is never beaten. "Use the 3D foundation model here"
+is not justified by accuracy alone on these targets.
+
+**Methods notes (tcrit-hardened, resolved)**:
+- *Scaffold parity*: all three lanes use identical Bemis-Murcko folds —
+  `MolTrain(split='select')` consumes precomputed fold ids from
+  `qsar_tutorial.data.scaffold_folds` (L-20260529-30).
+- *From-scratch control*: RESOLVED by monkeypatching
+  `UniMolModel.load_pretrained_weights` to a no-op (random-init backbone +
+  trained head) — what the prior run flagged as infra-blocked.
+- *Variance*: `unimol_tools` hardcodes the DataLoader shuffle generator
+  (`get_ddp_generator(seed=3407)`) and `Trainer.set_seed(config.seed)`, so
+  run-to-run variance ≈0 (seeds 0/1 differed <0.002, one fold only).
+  Multi-seed CI is degenerate; the honest error bar is the **per-fold
+  std**, reported above — 1 seed suffices on this library.
+**Owner**: `scripts/finetune_unimol.py` (MolTrain wrapper);
+`reports/{tyms,braf}_h7_finetune.json`.
 **dependent_workflows**: any "use the 3D foundation model for this target"
-decision — must weigh the finetuning GPU cost ($0.76 for this 2-seed run)
-against ECFP4's near-equal, near-free result.
+decision — weigh the finetuning GPU cost against ECFP4's equal, near-free
+result.
 
 <!-- H7 original design notes (tcrit 4-axis) retained below for reference -->
 
