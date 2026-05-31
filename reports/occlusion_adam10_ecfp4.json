@@ -1,0 +1,1666 @@
+{
+  "summary": {
+    "csv": "data/processed/adam10.csv",
+    "features": "ecfp4",
+    "n_molecules": 157,
+    "active_fraction": 0.8471,
+    "caveat": "model fit on ALL rows; occluded molecules in-sample (interpretability probe, not generalization)",
+    "conf_margin": 0.2,
+    "full": {
+      "tag": "all",
+      "n_active": 50,
+      "n_inactive": 24,
+      "active_mean_max_abs_delta": 0.0821,
+      "inactive_mean_max_abs_delta": 0.2425,
+      "active_mean_top1_concentration": 0.3675,
+      "inactive_mean_top1_concentration": 0.3907,
+      "mann_whitney_p_active_gt_inactive_maxdelta": 0.9998
+    },
+    "confident": {
+      "tag": "confident(|p-0.5|>=0.2)",
+      "n_active": 48,
+      "n_inactive": 24,
+      "active_mean_max_abs_delta": 0.0738,
+      "inactive_mean_max_abs_delta": 0.2425,
+      "active_mean_top1_concentration": 0.3688,
+      "inactive_mean_top1_concentration": 0.3907,
+      "mann_whitney_p_active_gt_inactive_maxdelta": 0.9999
+    },
+    "reference_FQ_contrast": {
+      "fq_max_delta": 0.448,
+      "nonfq_max_delta": 0.128,
+      "ratio": 3.5
+    },
+    "verdict": "NULL: occlusion does not separate actives from inactives (diffuse attribution)"
+  },
+  "per_molecule": [
+    {
+      "mid": 0,
+      "is_active": true,
+      "p_full": 0.979,
+      "n_atoms": 33,
+      "max_abs_delta": 0.062,
+      "top1_concentration": 0.457,
+      "top5_atoms": [
+        29,
+        28,
+        8,
+        2,
+        0
+      ],
+      "top5_delta": [
+        0.062,
+        0.0442,
+        0.0192,
+        0.0059,
+        0.0031
+      ]
+    },
+    {
+      "mid": 1,
+      "is_active": true,
+      "p_full": 0.976,
+      "n_atoms": 33,
+      "max_abs_delta": 0.1583,
+      "top1_concentration": 0.304,
+      "top5_atoms": [
+        21,
+        20,
+        16,
+        15,
+        17
+      ],
+      "top5_delta": [
+        0.1583,
+        0.1548,
+        0.0704,
+        0.0589,
+        0.0547
+      ]
+    },
+    {
+      "mid": 2,
+      "is_active": true,
+      "p_full": 0.998,
+      "n_atoms": 28,
+      "max_abs_delta": 0.0315,
+      "top1_concentration": 0.535,
+      "top5_atoms": [
+        10,
+        12,
+        23,
+        24,
+        22
+      ],
+      "top5_delta": [
+        0.0315,
+        0.0098,
+        0.0057,
+        0.0044,
+        0.0044
+      ]
+    },
+    {
+      "mid": 3,
+      "is_active": true,
+      "p_full": 0.991,
+      "n_atoms": 38,
+      "max_abs_delta": 0.0237,
+      "top1_concentration": 0.377,
+      "top5_atoms": [
+        20,
+        19,
+        24,
+        5,
+        21
+      ],
+      "top5_delta": [
+        0.0237,
+        0.0157,
+        0.0085,
+        0.0055,
+        0.0045
+      ]
+    },
+    {
+      "mid": 4,
+      "is_active": true,
+      "p_full": 0.984,
+      "n_atoms": 36,
+      "max_abs_delta": 0.1048,
+      "top1_concentration": 0.387,
+      "top5_atoms": [
+        23,
+        19,
+        24,
+        20,
+        18
+      ],
+      "top5_delta": [
+        0.1048,
+        0.0373,
+        0.0354,
+        0.032,
+        0.0297
+      ]
+    },
+    {
+      "mid": 5,
+      "is_active": true,
+      "p_full": 0.458,
+      "n_atoms": 37,
+      "max_abs_delta": 0.3628,
+      "top1_concentration": 0.451,
+      "top5_atoms": [
+        5,
+        21,
+        36,
+        17,
+        23
+      ],
+      "top5_delta": [
+        -0.3628,
+        0.1827,
+        0.1193,
+        0.0388,
+        0.037
+      ]
+    },
+    {
+      "mid": 6,
+      "is_active": true,
+      "p_full": 0.996,
+      "n_atoms": 32,
+      "max_abs_delta": 0.0438,
+      "top1_concentration": 0.433,
+      "top5_atoms": [
+        20,
+        19,
+        2,
+        0,
+        3
+      ],
+      "top5_delta": [
+        0.0438,
+        0.0237,
+        0.0109,
+        0.0079,
+        0.0071
+      ]
+    },
+    {
+      "mid": 7,
+      "is_active": true,
+      "p_full": 0.999,
+      "n_atoms": 26,
+      "max_abs_delta": 0.0233,
+      "top1_concentration": 0.524,
+      "top5_atoms": [
+        14,
+        13,
+        2,
+        0,
+        3
+      ],
+      "top5_delta": [
+        0.0233,
+        0.0066,
+        0.0048,
+        0.0037,
+        0.003
+      ]
+    },
+    {
+      "mid": 8,
+      "is_active": true,
+      "p_full": 0.991,
+      "n_atoms": 38,
+      "max_abs_delta": 0.0237,
+      "top1_concentration": 0.377,
+      "top5_atoms": [
+        20,
+        19,
+        24,
+        5,
+        21
+      ],
+      "top5_delta": [
+        0.0237,
+        0.0157,
+        0.0085,
+        0.0055,
+        0.0045
+      ]
+    },
+    {
+      "mid": 9,
+      "is_active": true,
+      "p_full": 0.998,
+      "n_atoms": 26,
+      "max_abs_delta": 0.0288,
+      "top1_concentration": 0.424,
+      "top5_atoms": [
+        14,
+        13,
+        2,
+        0,
+        3
+      ],
+      "top5_delta": [
+        0.0288,
+        0.0137,
+        0.0089,
+        0.0071,
+        0.0056
+      ]
+    },
+    {
+      "mid": 10,
+      "is_active": true,
+      "p_full": 0.987,
+      "n_atoms": 37,
+      "max_abs_delta": 0.0245,
+      "top1_concentration": 0.344,
+      "top5_atoms": [
+        18,
+        17,
+        22,
+        19,
+        24
+      ],
+      "top5_delta": [
+        0.0245,
+        0.0171,
+        0.0147,
+        0.0044,
+        0.0033
+      ]
+    },
+    {
+      "mid": 11,
+      "is_active": true,
+      "p_full": 0.994,
+      "n_atoms": 35,
+      "max_abs_delta": 0.0162,
+      "top1_concentration": 0.375,
+      "top5_atoms": [
+        18,
+        17,
+        22,
+        19,
+        12
+      ],
+      "top5_delta": [
+        0.0162,
+        0.0113,
+        0.0062,
+        0.0023,
+        0.0019
+      ]
+    },
+    {
+      "mid": 12,
+      "is_active": true,
+      "p_full": 0.985,
+      "n_atoms": 30,
+      "max_abs_delta": 0.1423,
+      "top1_concentration": 0.384,
+      "top5_atoms": [
+        13,
+        12,
+        27,
+        28,
+        26
+      ],
+      "top5_delta": [
+        0.1423,
+        0.1059,
+        0.0346,
+        0.0336,
+        0.0329
+      ]
+    },
+    {
+      "mid": 13,
+      "is_active": true,
+      "p_full": 0.963,
+      "n_atoms": 34,
+      "max_abs_delta": 0.0903,
+      "top1_concentration": 0.231,
+      "top5_atoms": [
+        29,
+        30,
+        13,
+        14,
+        28
+      ],
+      "top5_delta": [
+        0.0903,
+        0.0751,
+        0.0694,
+        0.0694,
+        0.0666
+      ]
+    },
+    {
+      "mid": 14,
+      "is_active": true,
+      "p_full": 0.997,
+      "n_atoms": 28,
+      "max_abs_delta": 0.0562,
+      "top1_concentration": 0.535,
+      "top5_atoms": [
+        10,
+        12,
+        23,
+        24,
+        22
+      ],
+      "top5_delta": [
+        0.0562,
+        0.0165,
+        0.0113,
+        0.0081,
+        0.008
+      ]
+    },
+    {
+      "mid": 15,
+      "is_active": true,
+      "p_full": 0.985,
+      "n_atoms": 36,
+      "max_abs_delta": 0.0299,
+      "top1_concentration": 0.354,
+      "top5_atoms": [
+        18,
+        17,
+        22,
+        19,
+        24
+      ],
+      "top5_delta": [
+        0.0299,
+        0.0211,
+        0.0191,
+        0.0059,
+        0.0038
+      ]
+    },
+    {
+      "mid": 16,
+      "is_active": true,
+      "p_full": 0.933,
+      "n_atoms": 28,
+      "max_abs_delta": 0.0579,
+      "top1_concentration": 0.288,
+      "top5_atoms": [
+        5,
+        1,
+        7,
+        3,
+        20
+      ],
+      "top5_delta": [
+        0.0579,
+        0.0462,
+        0.042,
+        0.0386,
+        0.0162
+      ]
+    },
+    {
+      "mid": 17,
+      "is_active": true,
+      "p_full": 0.995,
+      "n_atoms": 37,
+      "max_abs_delta": 0.0144,
+      "top1_concentration": 0.355,
+      "top5_atoms": [
+        20,
+        19,
+        24,
+        9,
+        5
+      ],
+      "top5_delta": [
+        0.0144,
+        0.0096,
+        0.0042,
+        0.0034,
+        0.0034
+      ]
+    },
+    {
+      "mid": 18,
+      "is_active": true,
+      "p_full": 0.129,
+      "n_atoms": 32,
+      "max_abs_delta": 0.1583,
+      "top1_concentration": 0.258,
+      "top5_atoms": [
+        16,
+        3,
+        8,
+        21,
+        24
+      ],
+      "top5_delta": [
+        -0.1583,
+        0.0683,
+        0.0618,
+        -0.0534,
+        -0.0534
+      ]
+    },
+    {
+      "mid": 19,
+      "is_active": true,
+      "p_full": 0.992,
+      "n_atoms": 32,
+      "max_abs_delta": 0.0523,
+      "top1_concentration": 0.32,
+      "top5_atoms": [
+        19,
+        20,
+        2,
+        0,
+        3
+      ],
+      "top5_delta": [
+        0.0523,
+        0.0488,
+        0.0227,
+        0.0172,
+        0.0148
+      ]
+    },
+    {
+      "mid": 20,
+      "is_active": true,
+      "p_full": 0.998,
+      "n_atoms": 29,
+      "max_abs_delta": 0.0129,
+      "top1_concentration": 0.268,
+      "top5_atoms": [
+        17,
+        16,
+        12,
+        13,
+        11
+      ],
+      "top5_delta": [
+        0.0129,
+        0.0123,
+        0.0086,
+        0.0073,
+        0.0069
+      ]
+    },
+    {
+      "mid": 21,
+      "is_active": true,
+      "p_full": 0.996,
+      "n_atoms": 25,
+      "max_abs_delta": 0.0263,
+      "top1_concentration": 0.33,
+      "top5_atoms": [
+        14,
+        13,
+        2,
+        0,
+        3
+      ],
+      "top5_delta": [
+        0.0263,
+        0.02,
+        0.0111,
+        0.0088,
+        0.0072
+      ]
+    },
+    {
+      "mid": 22,
+      "is_active": true,
+      "p_full": 0.248,
+      "n_atoms": 39,
+      "max_abs_delta": 0.3046,
+      "top1_concentration": 0.305,
+      "top5_atoms": [
+        15,
+        7,
+        2,
+        31,
+        20
+      ],
+      "top5_delta": [
+        -0.3046,
+        0.1233,
+        0.0904,
+        0.0863,
+        -0.0842
+      ]
+    },
+    {
+      "mid": 23,
+      "is_active": true,
+      "p_full": 0.955,
+      "n_atoms": 27,
+      "max_abs_delta": 0.1181,
+      "top1_concentration": 0.303,
+      "top5_atoms": [
+        25,
+        24,
+        26,
+        6,
+        3
+      ],
+      "top5_delta": [
+        0.1181,
+        0.0989,
+        0.0933,
+        0.0479,
+        0.0172
+      ]
+    },
+    {
+      "mid": 24,
+      "is_active": true,
+      "p_full": 0.997,
+      "n_atoms": 30,
+      "max_abs_delta": 0.0229,
+      "top1_concentration": 0.305,
+      "top5_atoms": [
+        18,
+        17,
+        13,
+        14,
+        12
+      ],
+      "top5_delta": [
+        0.0229,
+        0.0198,
+        0.0123,
+        0.0104,
+        0.0098
+      ]
+    },
+    {
+      "mid": 25,
+      "is_active": true,
+      "p_full": 0.962,
+      "n_atoms": 29,
+      "max_abs_delta": 0.2426,
+      "top1_concentration": 0.341,
+      "top5_atoms": [
+        11,
+        13,
+        24,
+        23,
+        25
+      ],
+      "top5_delta": [
+        0.2426,
+        0.138,
+        0.0976,
+        0.0966,
+        0.0836
+      ]
+    },
+    {
+      "mid": 26,
+      "is_active": true,
+      "p_full": 0.999,
+      "n_atoms": 27,
+      "max_abs_delta": 0.0125,
+      "top1_concentration": 0.484,
+      "top5_atoms": [
+        11,
+        13,
+        24,
+        25,
+        23
+      ],
+      "top5_delta": [
+        0.0125,
+        0.0044,
+        0.0029,
+        0.0023,
+        0.0022
+      ]
+    },
+    {
+      "mid": 27,
+      "is_active": true,
+      "p_full": 0.993,
+      "n_atoms": 33,
+      "max_abs_delta": 0.0632,
+      "top1_concentration": 0.326,
+      "top5_atoms": [
+        16,
+        15,
+        1,
+        30,
+        31
+      ],
+      "top5_delta": [
+        0.0632,
+        0.0474,
+        0.0217,
+        0.02,
+        0.0172
+      ]
+    },
+    {
+      "mid": 28,
+      "is_active": true,
+      "p_full": 0.989,
+      "n_atoms": 31,
+      "max_abs_delta": 0.0776,
+      "top1_concentration": 0.277,
+      "top5_atoms": [
+        15,
+        16,
+        1,
+        11,
+        12
+      ],
+      "top5_delta": [
+        0.0776,
+        0.0664,
+        0.0468,
+        0.0285,
+        0.0246
+      ]
+    },
+    {
+      "mid": 29,
+      "is_active": true,
+      "p_full": 0.994,
+      "n_atoms": 27,
+      "max_abs_delta": 0.0336,
+      "top1_concentration": 0.292,
+      "top5_atoms": [
+        13,
+        2,
+        0,
+        10,
+        3
+      ],
+      "top5_delta": [
+        0.0336,
+        0.0204,
+        0.0166,
+        0.0162,
+        0.0127
+      ]
+    },
+    {
+      "mid": 30,
+      "is_active": true,
+      "p_full": 0.999,
+      "n_atoms": 30,
+      "max_abs_delta": 0.0175,
+      "top1_concentration": 0.503,
+      "top5_atoms": [
+        18,
+        17,
+        13,
+        14,
+        12
+      ],
+      "top5_delta": [
+        0.0175,
+        0.0071,
+        0.003,
+        0.0025,
+        0.0023
+      ]
+    },
+    {
+      "mid": 31,
+      "is_active": true,
+      "p_full": 0.915,
+      "n_atoms": 36,
+      "max_abs_delta": 0.1756,
+      "top1_concentration": 0.224,
+      "top5_atoms": [
+        11,
+        13,
+        31,
+        32,
+        30
+      ],
+      "top5_delta": [
+        0.1756,
+        0.1756,
+        0.1605,
+        0.1308,
+        0.1301
+      ]
+    },
+    {
+      "mid": 32,
+      "is_active": true,
+      "p_full": 0.925,
+      "n_atoms": 26,
+      "max_abs_delta": 0.0515,
+      "top1_concentration": 0.387,
+      "top5_atoms": [
+        7,
+        0,
+        13,
+        2,
+        22
+      ],
+      "top5_delta": [
+        0.0515,
+        0.0355,
+        -0.0278,
+        -0.0079,
+        -0.0067
+      ]
+    },
+    {
+      "mid": 33,
+      "is_active": true,
+      "p_full": 0.995,
+      "n_atoms": 38,
+      "max_abs_delta": 0.0125,
+      "top1_concentration": 0.33,
+      "top5_atoms": [
+        20,
+        19,
+        24,
+        5,
+        21
+      ],
+      "top5_delta": [
+        0.0125,
+        0.0082,
+        0.0049,
+        0.0032,
+        0.0026
+      ]
+    },
+    {
+      "mid": 34,
+      "is_active": true,
+      "p_full": 0.998,
+      "n_atoms": 30,
+      "max_abs_delta": 0.0229,
+      "top1_concentration": 0.389,
+      "top5_atoms": [
+        18,
+        17,
+        13,
+        14,
+        12
+      ],
+      "top5_delta": [
+        0.0229,
+        0.0151,
+        0.0061,
+        0.0052,
+        0.0049
+      ]
+    },
+    {
+      "mid": 35,
+      "is_active": true,
+      "p_full": 0.998,
+      "n_atoms": 30,
+      "max_abs_delta": 0.0155,
+      "top1_concentration": 0.286,
+      "top5_atoms": [
+        18,
+        17,
+        13,
+        14,
+        12
+      ],
+      "top5_delta": [
+        0.0155,
+        0.0153,
+        0.008,
+        0.0067,
+        0.0063
+      ]
+    },
+    {
+      "mid": 36,
+      "is_active": true,
+      "p_full": 0.978,
+      "n_atoms": 36,
+      "max_abs_delta": 0.1239,
+      "top1_concentration": 0.35,
+      "top5_atoms": [
+        23,
+        24,
+        19,
+        20,
+        18
+      ],
+      "top5_delta": [
+        0.1239,
+        0.0602,
+        0.0504,
+        0.0427,
+        0.0396
+      ]
+    },
+    {
+      "mid": 37,
+      "is_active": true,
+      "p_full": 0.992,
+      "n_atoms": 31,
+      "max_abs_delta": 0.1459,
+      "top1_concentration": 0.511,
+      "top5_atoms": [
+        13,
+        12,
+        28,
+        27,
+        29
+      ],
+      "top5_delta": [
+        0.1459,
+        0.057,
+        0.023,
+        0.0211,
+        0.0211
+      ]
+    },
+    {
+      "mid": 38,
+      "is_active": true,
+      "p_full": 0.48,
+      "n_atoms": 30,
+      "max_abs_delta": 0.2026,
+      "top1_concentration": 0.218,
+      "top5_atoms": [
+        11,
+        17,
+        10,
+        16,
+        18
+      ],
+      "top5_delta": [
+        -0.2026,
+        -0.1772,
+        -0.1339,
+        -0.1163,
+        -0.1106
+      ]
+    },
+    {
+      "mid": 39,
+      "is_active": true,
+      "p_full": 0.995,
+      "n_atoms": 23,
+      "max_abs_delta": 0.2103,
+      "top1_concentration": 0.622,
+      "top5_atoms": [
+        8,
+        12,
+        11,
+        2,
+        0
+      ],
+      "top5_delta": [
+        0.2103,
+        0.063,
+        0.0295,
+        0.0142,
+        0.0108
+      ]
+    },
+    {
+      "mid": 40,
+      "is_active": true,
+      "p_full": 0.983,
+      "n_atoms": 34,
+      "max_abs_delta": 0.1247,
+      "top1_concentration": 0.375,
+      "top5_atoms": [
+        21,
+        17,
+        18,
+        16,
+        22
+      ],
+      "top5_delta": [
+        0.1247,
+        0.0566,
+        0.044,
+        0.0411,
+        0.0369
+      ]
+    },
+    {
+      "mid": 41,
+      "is_active": true,
+      "p_full": 0.995,
+      "n_atoms": 38,
+      "max_abs_delta": 0.0125,
+      "top1_concentration": 0.33,
+      "top5_atoms": [
+        20,
+        19,
+        24,
+        5,
+        21
+      ],
+      "top5_delta": [
+        0.0125,
+        0.0082,
+        0.0049,
+        0.0032,
+        0.0026
+      ]
+    },
+    {
+      "mid": 42,
+      "is_active": true,
+      "p_full": 0.995,
+      "n_atoms": 37,
+      "max_abs_delta": 0.013,
+      "top1_concentration": 0.341,
+      "top5_atoms": [
+        20,
+        19,
+        24,
+        5,
+        21
+      ],
+      "top5_delta": [
+        0.013,
+        0.0086,
+        0.0044,
+        0.0034,
+        0.0022
+      ]
+    },
+    {
+      "mid": 43,
+      "is_active": true,
+      "p_full": 0.975,
+      "n_atoms": 36,
+      "max_abs_delta": 0.0682,
+      "top1_concentration": 0.386,
+      "top5_atoms": [
+        17,
+        16,
+        21,
+        0,
+        24
+      ],
+      "top5_delta": [
+        0.0682,
+        0.0504,
+        0.0224,
+        0.0158,
+        0.0096
+      ]
+    },
+    {
+      "mid": 44,
+      "is_active": true,
+      "p_full": 0.997,
+      "n_atoms": 28,
+      "max_abs_delta": 0.0614,
+      "top1_concentration": 0.502,
+      "top5_atoms": [
+        14,
+        13,
+        2,
+        0,
+        3
+      ],
+      "top5_delta": [
+        0.0614,
+        0.0209,
+        0.0127,
+        0.0102,
+        0.0082
+      ]
+    },
+    {
+      "mid": 45,
+      "is_active": true,
+      "p_full": 0.951,
+      "n_atoms": 33,
+      "max_abs_delta": 0.1092,
+      "top1_concentration": 0.253,
+      "top5_atoms": [
+        2,
+        20,
+        0,
+        3,
+        24
+      ],
+      "top5_delta": [
+        0.1092,
+        0.088,
+        0.0808,
+        0.0677,
+        -0.0428
+      ]
+    },
+    {
+      "mid": 46,
+      "is_active": true,
+      "p_full": 0.996,
+      "n_atoms": 25,
+      "max_abs_delta": 0.0263,
+      "top1_concentration": 0.33,
+      "top5_atoms": [
+        14,
+        13,
+        2,
+        0,
+        3
+      ],
+      "top5_delta": [
+        0.0263,
+        0.02,
+        0.0111,
+        0.0088,
+        0.0072
+      ]
+    },
+    {
+      "mid": 47,
+      "is_active": true,
+      "p_full": 0.989,
+      "n_atoms": 31,
+      "max_abs_delta": 0.1314,
+      "top1_concentration": 0.434,
+      "top5_atoms": [
+        9,
+        11,
+        22,
+        21,
+        23
+      ],
+      "top5_delta": [
+        0.1314,
+        0.0485,
+        0.0336,
+        0.0328,
+        0.0285
+      ]
+    },
+    {
+      "mid": 48,
+      "is_active": true,
+      "p_full": 0.992,
+      "n_atoms": 37,
+      "max_abs_delta": 0.0205,
+      "top1_concentration": 0.374,
+      "top5_atoms": [
+        20,
+        19,
+        24,
+        5,
+        21
+      ],
+      "top5_delta": [
+        0.0205,
+        0.0136,
+        0.0068,
+        0.0047,
+        0.0034
+      ]
+    },
+    {
+      "mid": 49,
+      "is_active": true,
+      "p_full": 0.753,
+      "n_atoms": 28,
+      "max_abs_delta": 0.1417,
+      "top1_concentration": 0.284,
+      "top5_atoms": [
+        1,
+        15,
+        3,
+        17,
+        23
+      ],
+      "top5_delta": [
+        0.1417,
+        0.1381,
+        0.1142,
+        0.0599,
+        -0.0249
+      ]
+    },
+    {
+      "mid": 50,
+      "is_active": false,
+      "p_full": 0.037,
+      "n_atoms": 23,
+      "max_abs_delta": 0.0786,
+      "top1_concentration": 0.551,
+      "top5_atoms": [
+        14,
+        12,
+        22,
+        4,
+        2
+      ],
+      "top5_delta": [
+        -0.0786,
+        -0.0468,
+        -0.0091,
+        -0.0059,
+        0.0023
+      ]
+    },
+    {
+      "mid": 51,
+      "is_active": false,
+      "p_full": 0.045,
+      "n_atoms": 25,
+      "max_abs_delta": 0.4613,
+      "top1_concentration": 0.453,
+      "top5_atoms": [
+        13,
+        10,
+        24,
+        17,
+        20
+      ],
+      "top5_delta": [
+        -0.4613,
+        -0.3288,
+        -0.1275,
+        -0.0437,
+        -0.0437
+      ]
+    },
+    {
+      "mid": 52,
+      "is_active": false,
+      "p_full": 0.058,
+      "n_atoms": 37,
+      "max_abs_delta": 0.1706,
+      "top1_concentration": 0.421,
+      "top5_atoms": [
+        12,
+        4,
+        34,
+        20,
+        33
+      ],
+      "top5_delta": [
+        -0.1706,
+        -0.0917,
+        -0.0749,
+        -0.0438,
+        -0.0129
+      ]
+    },
+    {
+      "mid": 53,
+      "is_active": false,
+      "p_full": 0.016,
+      "n_atoms": 80,
+      "max_abs_delta": 0.0165,
+      "top1_concentration": 0.171,
+      "top5_atoms": [
+        7,
+        14,
+        39,
+        42,
+        69
+      ],
+      "top5_delta": [
+        -0.0165,
+        -0.0165,
+        -0.0094,
+        -0.0094,
+        -0.0094
+      ]
+    },
+    {
+      "mid": 54,
+      "is_active": false,
+      "p_full": 0.028,
+      "n_atoms": 29,
+      "max_abs_delta": 0.1942,
+      "top1_concentration": 0.45,
+      "top5_atoms": [
+        19,
+        0,
+        2,
+        8,
+        9
+      ],
+      "top5_delta": [
+        -0.1942,
+        -0.1007,
+        -0.0453,
+        -0.0435,
+        -0.0187
+      ]
+    },
+    {
+      "mid": 55,
+      "is_active": false,
+      "p_full": 0.053,
+      "n_atoms": 38,
+      "max_abs_delta": 0.3547,
+      "top1_concentration": 0.383,
+      "top5_atoms": [
+        5,
+        12,
+        11,
+        17,
+        19
+      ],
+      "top5_delta": [
+        -0.3547,
+        -0.1536,
+        -0.1331,
+        -0.0717,
+        -0.0671
+      ]
+    },
+    {
+      "mid": 56,
+      "is_active": false,
+      "p_full": 0.082,
+      "n_atoms": 38,
+      "max_abs_delta": 0.1912,
+      "top1_concentration": 0.738,
+      "top5_atoms": [
+        5,
+        37,
+        17,
+        11,
+        12
+      ],
+      "top5_delta": [
+        -0.1912,
+        0.0282,
+        0.0111,
+        0.0081,
+        0.0081
+      ]
+    },
+    {
+      "mid": 57,
+      "is_active": false,
+      "p_full": 0.084,
+      "n_atoms": 22,
+      "max_abs_delta": 0.1137,
+      "top1_concentration": 0.352,
+      "top5_atoms": [
+        15,
+        21,
+        3,
+        9,
+        10
+      ],
+      "top5_delta": [
+        -0.1137,
+        -0.1022,
+        -0.0439,
+        -0.0186,
+        -0.0186
+      ]
+    },
+    {
+      "mid": 58,
+      "is_active": false,
+      "p_full": 0.032,
+      "n_atoms": 35,
+      "max_abs_delta": 0.4505,
+      "top1_concentration": 0.312,
+      "top5_atoms": [
+        32,
+        29,
+        8,
+        34,
+        15
+      ],
+      "top5_delta": [
+        -0.4505,
+        -0.434,
+        -0.225,
+        -0.1328,
+        -0.097
+      ]
+    },
+    {
+      "mid": 59,
+      "is_active": false,
+      "p_full": 0.143,
+      "n_atoms": 29,
+      "max_abs_delta": 0.8191,
+      "top1_concentration": 0.584,
+      "top5_atoms": [
+        8,
+        11,
+        13,
+        23,
+        24
+      ],
+      "top5_delta": [
+        -0.8191,
+        -0.2718,
+        0.0909,
+        0.0732,
+        0.0584
+      ]
+    },
+    {
+      "mid": 60,
+      "is_active": false,
+      "p_full": 0.043,
+      "n_atoms": 36,
+      "max_abs_delta": 0.3753,
+      "top1_concentration": 0.632,
+      "top5_atoms": [
+        20,
+        24,
+        33,
+        4,
+        10
+      ],
+      "top5_delta": [
+        -0.3753,
+        -0.1436,
+        0.0191,
+        0.013,
+        0.0116
+      ]
+    },
+    {
+      "mid": 61,
+      "is_active": false,
+      "p_full": 0.044,
+      "n_atoms": 27,
+      "max_abs_delta": 0.0283,
+      "top1_concentration": 0.206,
+      "top5_atoms": [
+        1,
+        14,
+        7,
+        8,
+        9
+      ],
+      "top5_delta": [
+        -0.0283,
+        0.0281,
+        0.025,
+        0.025,
+        0.0125
+      ]
+    },
+    {
+      "mid": 62,
+      "is_active": false,
+      "p_full": 0.06,
+      "n_atoms": 23,
+      "max_abs_delta": 0.1258,
+      "top1_concentration": 0.453,
+      "top5_atoms": [
+        17,
+        12,
+        4,
+        16,
+        10
+      ],
+      "top5_delta": [
+        -0.1258,
+        -0.0427,
+        -0.0413,
+        -0.0252,
+        -0.0155
+      ]
+    },
+    {
+      "mid": 63,
+      "is_active": false,
+      "p_full": 0.017,
+      "n_atoms": 25,
+      "max_abs_delta": 0.057,
+      "top1_concentration": 0.447,
+      "top5_atoms": [
+        11,
+        16,
+        19,
+        24,
+        3
+      ],
+      "top5_delta": [
+        -0.057,
+        -0.0205,
+        -0.0205,
+        -0.0111,
+        -0.0062
+      ]
+    },
+    {
+      "mid": 64,
+      "is_active": false,
+      "p_full": 0.137,
+      "n_atoms": 38,
+      "max_abs_delta": 0.2217,
+      "top1_concentration": 0.364,
+      "top5_atoms": [
+        14,
+        6,
+        19,
+        22,
+        30
+      ],
+      "top5_delta": [
+        -0.2217,
+        0.0728,
+        -0.0562,
+        -0.0562,
+        0.0484
+      ]
+    },
+    {
+      "mid": 65,
+      "is_active": false,
+      "p_full": 0.025,
+      "n_atoms": 83,
+      "max_abs_delta": 0.0356,
+      "top1_concentration": 0.32,
+      "top5_atoms": [
+        40,
+        19,
+        56,
+        8,
+        48
+      ],
+      "top5_delta": [
+        -0.0356,
+        -0.0348,
+        -0.0111,
+        -0.0097,
+        -0.0085
+      ]
+    },
+    {
+      "mid": 66,
+      "is_active": false,
+      "p_full": 0.141,
+      "n_atoms": 24,
+      "max_abs_delta": 0.63,
+      "top1_concentration": 0.333,
+      "top5_atoms": [
+        15,
+        0,
+        2,
+        12,
+        11
+      ],
+      "top5_delta": [
+        -0.63,
+        -0.5016,
+        -0.4924,
+        -0.1448,
+        0.0617
+      ]
+    },
+    {
+      "mid": 67,
+      "is_active": false,
+      "p_full": 0.033,
+      "n_atoms": 68,
+      "max_abs_delta": 0.0323,
+      "top1_concentration": 0.172,
+      "top5_atoms": [
+        0,
+        37,
+        20,
+        23,
+        56
+      ],
+      "top5_delta": [
+        -0.0323,
+        -0.0323,
+        -0.0173,
+        -0.0173,
+        -0.0173
+      ]
+    },
+    {
+      "mid": 68,
+      "is_active": false,
+      "p_full": 0.034,
+      "n_atoms": 84,
+      "max_abs_delta": 0.0467,
+      "top1_concentration": 0.401,
+      "top5_atoms": [
+        18,
+        63,
+        75,
+        62,
+        3
+      ],
+      "top5_delta": [
+        -0.0467,
+        -0.0199,
+        -0.0128,
+        0.0106,
+        0.0085
+      ]
+    },
+    {
+      "mid": 69,
+      "is_active": false,
+      "p_full": 0.039,
+      "n_atoms": 38,
+      "max_abs_delta": 0.1187,
+      "top1_concentration": 0.357,
+      "top5_atoms": [
+        8,
+        1,
+        26,
+        17,
+        25
+      ],
+      "top5_delta": [
+        -0.1187,
+        -0.0941,
+        -0.0661,
+        -0.0195,
+        -0.0173
+      ]
+    },
+    {
+      "mid": 70,
+      "is_active": false,
+      "p_full": 0.043,
+      "n_atoms": 34,
+      "max_abs_delta": 0.3146,
+      "top1_concentration": 0.393,
+      "top5_atoms": [
+        5,
+        12,
+        11,
+        17,
+        19
+      ],
+      "top5_delta": [
+        -0.3146,
+        -0.1368,
+        -0.12,
+        -0.0642,
+        -0.0587
+      ]
+    },
+    {
+      "mid": 71,
+      "is_active": false,
+      "p_full": 0.116,
+      "n_atoms": 38,
+      "max_abs_delta": 0.7376,
+      "top1_concentration": 0.301,
+      "top5_atoms": [
+        27,
+        28,
+        29,
+        34,
+        33
+      ],
+      "top5_delta": [
+        -0.7376,
+        -0.7376,
+        -0.7376,
+        0.0541,
+        0.0522
+      ]
+    },
+    {
+      "mid": 72,
+      "is_active": false,
+      "p_full": 0.079,
+      "n_atoms": 60,
+      "max_abs_delta": 0.0415,
+      "top1_concentration": 0.12,
+      "top5_atoms": [
+        2,
+        31,
+        20,
+        23,
+        49
+      ],
+      "top5_delta": [
+        0.0415,
+        0.0415,
+        -0.0356,
+        -0.0356,
+        -0.0356
+      ]
+    },
+    {
+      "mid": 73,
+      "is_active": false,
+      "p_full": 0.073,
+      "n_atoms": 37,
+      "max_abs_delta": 0.2041,
+      "top1_concentration": 0.464,
+      "top5_atoms": [
+        7,
+        25,
+        36,
+        24,
+        16
+      ],
+      "top5_delta": [
+        -0.2041,
+        -0.1121,
+        -0.0397,
+        -0.0306,
+        -0.0203
+      ]
+    }
+  ]
+}

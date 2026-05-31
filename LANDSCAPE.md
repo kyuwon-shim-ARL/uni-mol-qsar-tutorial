@@ -428,6 +428,55 @@ path" claim must be qualified: reliable where a localizable pharmacophore + well
 model exist, not guaranteed. Outputs: `reports/occlusion_braf.json`; sibling repro
 `/tmp/orig_occl_repro/occlusion_full.json` (not committed).
 
+**L-20260531-44** — refers_to: H2 (occlusion path), H6 — polarity: qualifies — source: measured
+*reports/occlusion_braf_ecfp4.json* (`scripts/occlusion_braf_ecfp4.py`, GPU-free).
+Route A: atom-occlusion on the **strong ECFP4+XGBoost** BRAF model (scaffold 5-fold
+OOF, AUC **0.913**) — the control for L-42's weak-2-fold-Uni-Mol null. **Verdict:
+SIGNAL.** Confident subset (|p−0.5|≥0.2, n=40/40): active max|Δp| **0.339** vs
+inactive **0.095** = **3.6× contrast** (MWU p≈0), comparable to the FQ reference
+3.5×. Concentration act 0.35 vs ina 0.30. **So occlusion DOES localize actives on
+BRAF when the model is strong** — L-42's BRAF "null" was a **weak-model artifact**
+(2-fold, 2-epoch, p~0.48), NOT intrinsic to the target. This sharpens the open
+question for Route B (proper 5-fold Uni-Mol, GPU): does a *well-trained Uni-Mol*
+also localize, or does the Uni-Mol *representation* still fail to localize where
+ECFP4 succeeds (which would be a Uni-Mol-specific weakness consistent with H6)?
+Route B pending GPU. Method note: occlusion on ECFP4 = mask atom → recompute
+fingerprint → XGB predict → Δp; OOF (each molecule scored by a fold that did not
+train on it).
+
+**L-20260601-45** — refers_to: H2 (occlusion path), H6 — polarity: qualifies — source: measured
+*reports/occlusion_braf_5fold.json* (`scripts/occlusion_braf_5fold.py`). Route B
+(GPU): retrained BRAF Uni-Mol **properly** — 5-fold end-to-end finetune, epochs=20,
+on RunPod RTX 3090 ($0.59, pod deleted). Per-fold scaffold val AUC 0.915/0.868/0.881/
+0.896 (pooled OOF 0.874) — a **confident model** (vs the L-42 2-epoch/2-fold ckpt at
+p~0.48). Atom-occlusion on it (50 act + 50 ina, same metric): **Verdict SIGNAL.**
+Confident subset (|p−0.5|≥0.2, n=48/44): active max|Δp| **0.291** vs inactive **0.200**
+(**1.45×**, MWU p=**0.0028**). **So a well-trained Uni-Mol DOES localize actives** —
+L-42's BRAF "null" is now conclusively a **weak-model artifact** (both Uni-Mol-proper
+and ECFP4 show the signal; only the 2-epoch model was flat). **But ECFP4 localizes
+~2.5× more sharply** (L-44: active 0.339 vs inactive 0.095 = **3.56×**, MWU p≈0; OOF AUC
+0.913 vs Uni-Mol 0.874). So occlusion+MMP is a *real, model-agnostic* interpretability
+path that works on BRAF for both representations once the model is trained — and ECFP4
+gives both better accuracy AND sharper attribution, consistent with H6 (ECFP4 > Uni-Mol
+on this target). Resolves the L-42 caveat. Uni-Mol concentration metric did NOT separate
+(act 0.38 vs ina 0.42) — the Uni-Mol signal is in Δp magnitude, not top-1 concentration;
+ECFP4 separated on both. RunPod note: COMMUNITY stock was exhausted (all DCs 500); SECURE
+RTX 3090 placed; libXrender1 + huggingface_hub needed manual install on the image; batch
+32 OOM'd 24 GB → batch 8.
+
+**L-20260601-46** — refers_to: L-44, L-45 (calibration control) — polarity: confirms — source: measured
+*reports/figures/occlusion_calibration.png* (`scripts/occlusion_calibration.py`, CPU-only).
+Calibration check on the 3.56× (ECFP4) vs 1.45× (Uni-Mol) occlusion-sharpness contrast
+(L-44/L-45). Both models scored on the SAME 100-molecule BRAF OOF sample (50 act/50 ina)
+already used in the occlusion experiments; per-molecule OOF probabilities pulled directly
+from the existing JSON reports — no retraining needed. ECE (10-bin uniform):
+**ECFP4+XGB = 0.0898**, **Uni-Mol 5-fold = 0.0839**, |ΔECE| = **0.0059**.
+**Verdict: CALIBRATION SIMILAR** — |ΔECE| = 0.006 is far below the 0.05 materiality
+threshold. Both models are roughly equally (mis)calibrated on this sample. The 3.56× vs
+1.45× occlusion-sharpness contrast **SURVIVES calibration adjustment** and is not a
+calibration artifact. The ECFP4 advantage in attribution sharpness is a genuine
+representational/model difference, consistent with H6.
+
 **L-20260531-43** — refers_to: H2 — polarity: refutes (closes the last SAE axis) — source: measured
 *reports/sae_class_monosem.json* (`scripts/sae_class_monosem.py`, CPU, e191 dense
 activations re-scored). The concept axis was already ~0; this closes the **class-
@@ -447,3 +496,95 @@ on either axis. *Caveat/scope*: the original's 13.7% class-mono was on a DIFFERE
 representation may genuinely carry more selectivity. This result is specific to the 768-d
 e191 dense SAE (the one where we measured concept-axis 0), making concept+class axes
 now both measured on one representation.
+
+**L-20260601-47** — refers_to: L-44, L-45 (extends to TYMS) — polarity: qualifies — source: measured
+*reports/occlusion_{tyms,adam10}_{ecfp4,unimol}.json* (`scripts/occlusion_compare.py`, CPU;
+my exploratory in-sample BRAF cells via this tool were redundant with L-44/45's superior OOF
+runs and removed to avoid filename clobber — BRAF numbers below cite L-44/45).
+Extends the BRAF occlusion sweep (L-44/45) to **TYMS (enzyme) + ADAM10
+(metalloprotease)**, model-agnostic full-fit in-sample probe. Headline new finding:
+**TYMS-ECFP4 is the ONLY cell in the whole sweep with a *concentrated* pharmacophore
+— top-1 atom concentration 0.64** (vs 0.24–0.37 everywhere else), confident active
+max|Δp| 0.49 vs inactive 0.16 (MWU p≈0). The antifolate pharmacophore localizes
+cleanly in ECFP4's substructure space — a sharper single-atom story than BRAF
+(diffuse even when it separates). ADAM10: **inconclusive** — 157 mol / 84.7% active
+(~24 inactives), max|Δp| reversed/noisy.
+**Two confounds keep this from being a clean "representation" claim (honest scope):**
+(1) *In-sample*: model fit on all rows, so the active/inactive SEPARATION is
+confidence-inflated vs L-44/45's OOF protocol — but CONCENTRATION (within-molecule
+top-1 share) is largely insensitive to that, so the 0.64 is the robust part.
+(2) *Model strength*: TYMS frozen-Uni-Mol occlusion came out NULL (conc 0.32, MWU
+p=0.83) — BUT frozen-Uni-Mol is a *weak* TYMS model (AUC 0.731, L-29), and L-44/45
+established weak model → flat occlusion. So this NULL does **not** prove a Uni-Mol
+representational deficit on TYMS; it is consistent with the weak-model lesson. The
+clean test (matching L-45's BRAF design) needs a **properly finetuned Uni-Mol TYMS +
+OOF occlusion** — deferred (GPU). Net so far: ECFP4 attribution is reliably readable
+(and uniquely concentrated on TYMS's real pharmacophore); the Uni-Mol-vs-ECFP4
+sharpness gap is established on BRAF (L-44/45, 3.56× vs 1.45×) but not yet on TYMS.
+**UPDATE — confound #2 RESOLVED in L-49:** a properly finetuned Uni-Mol TYMS (AUC 0.770,
+not weak) is STILL occlusion-NULL while ECFP4 concentrates (0.589, p=0.002) → the TYMS gap
+is representational, not model-strength.
+
+**L-20260601-48** — refers_to: H6 (the 3D-value question) — polarity: refutes (closes the strongest pro-3D case) — source: measured
+*reports/stereo_directional.json, reports/stereo_embedding_sanity.json, reports/stereo_pairs.csv,
+reports/figures/stereo_directional.png* (`scripts/stereo_pairs_gate.py`, `stereo_embedding_sanity.py`,
+`stereo_directional.py`, `stereo_directional_fig.py`, all CPU). **The decisive test of where
+3D *could* uniquely win: stereochemistry-dependent activity that 2D fingerprints are blind to.**
+**Data gate (T-D1, GPU 0):** curated **392 stereo-divergent pairs** (301 distinct flat
+scaffolds; identical 2D Murcko graph, both fully stereo-defined, same assay, |ΔpIC50|≥0.7)
+from the kinase ChEMBL pool (jak2 328 / egfr 51 / braf 7 / cdk6 4 / adam10 2) — well above
+the ~40-pair power gate → **GO** (a real test, not a data-limit outcome).
+**Embedding sanity (T-A2):** Uni-Mol v1 frozen embeddings **DO** separate stereoisomers
+geometrically — d_stereo median **0.040** vs deterministic conformer-noise floor **0.0** and
+inter-molecule scale **0.140** (≈28% of full scale); enantiomers (0.0396) and diastereomers
+(0.0407) separate almost equally → the representation is **not** reflection-invariant and is
+**not** stereo-blind.
+**Directional test (T-A1, 3-way, GroupKFold-by-scaffold OOF, Ridge):**
+ECFP4-plain (`includeChirality=False`) = **0.500** (blind by construction; identical features
+within every pair — asserted, not measured); **ECFP4-chiral = 0.589** [CI 0.541–0.635],
+CI-separated from chance, McNemar vs plain p≈0; **Uni-Mol frozen = 0.506** [CI 0.459–0.554],
+indistinguishable from chance; McNemar Uni-Mol vs ECFP4-chiral p=0.71.
+**Verdict: UNIMOL-LOSES (deflationary).** Cheap 2D stereo *tags* rank stereo-divergent
+activity; frozen 3D *geometry* does not — even though it demonstrably *separates* the
+stereoisomers. **Geometric separation ≠ an actionable stereo→activity relationship.** This
+refutes the strongest remaining pro-3D argument and reinforces the H6 landscape ("cheap
+ECFP4 is never beaten" on these kinase tasks).
+*Scope/caveats:* (1) **PROXY-SCOPE** — stereo-activity ranking is a *necessary-not-sufficient*
+proxy for docking/SBDD pose correctness; this does **not** establish binding poses, and
+pose-level validation (Boltz-2 etc.) remains explicit future work. (2) Tested **frozen**
+pretrained Uni-Mol (saw 3D in pretraining), so the loss is a representation property, not a
+finetuning/label-washout artifact. (3) Small-data directional regime (training on 665
+pair-molecules only): the cross-feature *comparison* is fair (shared pipeline + folds) but
+absolute accuracies are conservative; a **full-pool finetuned** Uni-Mol test needs GPU
+embedding of 40k+ training molecules (CPU-infeasible) and is the one open extension that
+could still move the verdict.
+
+**L-20260601-49** — refers_to: L-47 (resolves confound), L-44/L-45, H6 — polarity: qualifies — source: measured
+*reports/occlusion_tyms_5fold.json (finetuned Uni-Mol 5-fold, A40 $0.08) +
+reports/occlusion_tyms_ecfp4.json (ECFP4 OOF, CPU); scripts/occlusion_tyms_{ecfp4,5fold}.py*.
+**Resolves L-47's confound** (there the TYMS Uni-Mol was *frozen* = weak, AUC 0.731 → its
+NULL was uninterpretable). Now both lanes are STRONG and protocol-matched (confident
+|p−0.5|≥0.2, 50/class, mask→C, max|Δp| + top-1 concentration + one-sided MWU):
+
+| TYMS, confident | OOF AUC | act maxΔ / ina | conc(act) | MWU p | verdict |
+|-----------------|---------|----------------|-----------|-------|---------|
+| ECFP4 (OOF) | 0.810 | 0.42 / 0.28 | **0.589** | 0.002 | **SIGNAL + concentrated** |
+| finetuned Uni-Mol 5-fold | 0.770 | 0.29 / 0.25 | 0.367 | 0.110 | **NULL** |
+
+**Key result**: with Uni-Mol now *properly finetuned* (AUC 0.770, comparable to ECFP4's
+0.810 — NOT a weak model), TYMS atom-occlusion is **still null/diffuse**, while ECFP4
+localizes a **concentrated antifolate pharmacophore** (conc 0.589, p=0.002). So the TYMS
+localization gap is a genuine **REPRESENTATION property, not model-strength** — L-47's
+weak-model caveat is closed. **Target-dependence**: on BRAF a finetuned Uni-Mol *did*
+localize (L-45, 1.45×); on TYMS it does **not** — Uni-Mol's atom-occlusion deficit is
+worst exactly where a sharp 2D pharmacophore exists (TYMS antifolate), the very signal
+ECFP4's substructure-bit space exposes cleanly while the dense embedding smears it.
+Completes the occlusion sweep: **ECFP4 ≥ Uni-Mol for atom-attribution on every target
+tested, gap largest on TYMS.** Converges with L-48 (Uni-Mol loses on stereo-ranking) and
+H7 (ECFP4 parity/superiority predictively) — across accuracy, stereo, and interpretability,
+cheap ECFP4 is not beaten on these targets.
+*Caveats*: matched-not-identical — ECFP4 scored OOF (held-out fold), Uni-Mol scored by the
+5-fold MolPredict ensemble (in-sample-averaged baseline, same as L-45); the in-sample
+baseline if anything *inflates* Uni-Mol Δp, so its NULL is conservative. epochs=20 (matches
+L-45). (The occlusion_tyms_5fold.json `verdict` string is stale copy-text reading "BRAF/2-fold"
+— the metrics are TYMS finetuned 5-fold.)
